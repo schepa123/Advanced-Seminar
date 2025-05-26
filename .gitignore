@@ -1,3 +1,4 @@
 .env
 Notizen.md
 *.ipynb
+*.pyc
