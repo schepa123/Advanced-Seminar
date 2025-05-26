@@ -10,6 +10,7 @@ class MetaExpertState(TypedDict, total=False):
     Attributes:
         conversation: A list of the conversation between
         the meta experts and other agents.
+        latest_user_utterance: The latest user utterance
         domains: Which domains are present in this dialogue
         turn of the dataset.
         last_action: Last action performed by the multi agent
@@ -17,6 +18,7 @@ class MetaExpertState(TypedDict, total=False):
         domain_slots: Dict of slots for each domain.
     """
     conversation: list[str]
+    latest_user_utterance: str
     domains: list[str]
     last_action: list[str]
     domain_slots: dict[str, dict[str, str]]
