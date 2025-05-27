@@ -25,9 +25,8 @@ class agentSystem:
         )
         self.slot_extractor_agent = LLMChain(
             llm=self.model,
-            prompt=self.topic_template
+            prompt=utils_functions.return_prompt("extract_slots")
         )
-
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
         """
