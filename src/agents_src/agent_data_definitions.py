@@ -20,6 +20,7 @@ class MetaExpertState(TypedDict, total=False):
         extraction_results: Current results of the extraction process.
         last_verification_results: Latest results of the verification
         process.
+        last_node: Last node that was executed.
     """
     conversation: list[dict[str, str]]
     latest_user_utterance: str

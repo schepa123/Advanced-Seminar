@@ -9,6 +9,7 @@ import json
 from .agent_data_definitions import DomainResponse, MetaExpertState
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
+from langchain.chains import LLMChain
 from utils import utils_functions
 from textwrap import dedent
 
@@ -22,10 +23,15 @@ class agentSystem:
             prompt=utils_functions.return_prompt("detect_domain"),
             response_format=DomainResponse
         )
+        self.slot_extractor_agent = LLMChain(
+            llm=self.model,
+            prompt=self.topic_template
+        )
+
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
         """
-        Extracts the domain from the last turn of a conversation.
+        Extracts the domain from the latest user utterance.
 
         Args:
             state (MetaExpertState): Current state of the system.
@@ -45,14 +51,23 @@ class agentSystem:
 
         return Command(
             update={
-                "domains": domains,
+                "domains": (
+                    utils_functions.fix_common_spelling_mistakes(domains)
+                ),
                 "last_node": ["domain_extractor_agent"]
             }
         )
 
     def slot_extractor_agent(self, state: MetaExpertState) -> Command:
         """
-        123
+        Extracts the slot-value pairs from the latest user utterance.
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to update `extraction_result` and `last_node`
+            fields of state.
         """
         user_prompt = utils_functions.build_last_utterance_prompt(state)
 

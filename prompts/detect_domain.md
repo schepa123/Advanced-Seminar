@@ -28,7 +28,7 @@ You will be presented with a conversation between a user searching for a recomme
 - train-arriveby: arrival time of the train; what time you want the train to arrive at your destination station by; when you want to arrive at your destination by train
 - train-book people: number of people booking for train; how many people you need train booking for; how many train tickets you need
 - train-leaveat: leaving time for the train; what time you want the train to leave your departure station by; when you want to arrive at your destination by train
-### tttraction
+### atttraction
 - attraction-type: type of the attraction; type of attraction or point of interest
 - attraction-area: area or place of the attraction; area to search for attractions; preferred location for attraction
 - attraction-name: name of the attraction; which attraction are you looking for
