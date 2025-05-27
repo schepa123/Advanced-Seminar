@@ -38,6 +38,8 @@ class agentSystem:
 
         return Command(
             update={
-                "domains": domains
+                "domains": domains,
+                "last_node": ["domain_extractor_agent"]
             }
         )
+
