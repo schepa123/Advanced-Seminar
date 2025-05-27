@@ -5,12 +5,12 @@ You are an expert that is part of a group of experts simulating a conversational
 
 ## Task
 
-You will be presented with a conversation between a user searching for a recommendation in a certain domain(s) and the system’s answers to the user's inquiries. Please note that a conversation can include multiple domains or only a single domain; you must always answer with all domains present. Your task is to focus strictly on the user's last utterance (the text between the tag <last_user_utterance>) to identify the domains for which a recommendation is sought. However, keep in mind all prior conversation turns to recognize indirect domain implications. Ensure your response includes **ONLY** the domain names from the list: ["Hotel", "Train", "Attraction", "Restaurant", "Taxi", "Bus"] and return the domain(s) as element(s) of a list, e.g. [`domain`].  
+You will be presented with a conversation between a user searching for a recommendation in a certain domain(s) and the conversational recommender system’s answers to the user's inquiries. Please note that a conversation can include multiple domains or only a single domain; you must always answer with all domains present. Your task is to focus strictly on the user's last utterance (the text between the tag <last_user_utterance>) to identify the domains for which a recommendation is sought. However, keep in mind all prior conversation turns to recognize indirect domain implications. Ensure your response includes **ONLY** the domain names from the list: ["Hotel", "Train", "Attraction", "Restaurant", "Taxi", "Bus"] and return the domain(s) as element(s) of a list, e.g. [`domain`].  
 
 - **Note on Edge Cases**: If the user's last turn implies multiple domains within context, identify all relevant domains. In cases where no specific domain is mentioned, respond with an empty list format [].
 
 ## Domain Definition
-### Hotel
+### hotel
 - hotel-pricerange: price budget of the hotel; preferred cost of the hotel
 - hotel-type: what is the type of the hotel; type of hotel building
 - hotel-parking: parking facility at the hotel; whether the hotel has parking; does the hotel have parking
@@ -21,18 +21,18 @@ You will be presented with a conversation between a user searching for a recomme
 - hotel-stars: star rating of the hotel; rating of the hotel out of five stars
 - hotel-internet: internet option at the hotel; whether the hotel has internet
 - hotel-name: name of the hotel; which hotel are you looking for; price budget of the hotel; preferred cost of the hotel
-### Train
+### train
 - train-destination: destination of the train; what train station you want to travel to; destination or drop-off location of the train
 - train-day: day of the train; what day you want to take the train
 - train-departure: departure location of the train; what train station you want to leave from
 - train-arriveby: arrival time of the train; what time you want the train to arrive at your destination station by; when you want to arrive at your destination by train
 - train-book people: number of people booking for train; how many people you need train booking for; how many train tickets you need
 - train-leaveat: leaving time for the train; what time you want the train to leave your departure station by; when you want to arrive at your destination by train
-### Attraction
+### tttraction
 - attraction-type: type of the attraction; type of attraction or point of interest
 - attraction-area: area or place of the attraction; area to search for attractions; preferred location for attraction
 - attraction-name: name of the attraction; which attraction are you looking for
-### Restaurant
+### restaurant
 - restaurant-book people: number of people booking the restaurant; how many people for the restaurant reservation
 - restaurant-book day: day of the restaurant booking; what day of the week to book the table at the restaurant
 - restaurant-book time: time of the restaurant booking; what time to book the table at the restaurant
@@ -40,12 +40,12 @@ You will be presented with a conversation between a user searching for a recomme
 - restaurant-pricerange: price budget for the restaurant; preferred cost of the restaurant
 - restaurant-name: name of the restaurant; which restaurant are you looking for
 - restaurant-area: area or place of the restaurant; preferred location of restaurant
-### Taxi
+### taxi
 - taxi-leaveat: leaving time of taxi; when you want the taxi to pick you up; what time you want the taxi to leave your departure location by
 - taxi-destination: destination of taxi; where you want the taxi to drop you off; what place do you want the taxi to take you to
 - taxi-departure: departure location of taxi; where you want the taxi to pick you up; what place do you want to meet the taxi
 - taxi-arriveby: arrival time of taxi; when you want the taxi to drop you off at your destination; what time you to arrive at your destination by taxi
-### Bus
+### bus
 - bus-people: number of people booking bus tickets; how many people are riding the bus
 - bus-leaveAt: leaving time of bus; when you want the bus to pick you up; what time you want the bus to leave your departure location by
 - bus-destination: destination of bus; where you want the bus to drop you off; what place do you want the bus to take you to
@@ -58,14 +58,14 @@ You will be presented with a conversation between a user searching for a recomme
 #### Input
 <prior_conversation>
 ```json
-{
+{{
     [
-        {"user": "Hello, are there any attractions on the eastside?"},
-        {"system": "Yes, there's entertainment, museums, boats. Would you like information on a particular attraction?"},
-        {"user": "What is the entrance fee for the parks?"},
-        {"system": "The park is free it's called cherry hinton water play would you like the address?"}
+        {{"user": "Hello, are there any attractions on the eastside?"}},
+        {{"system": "Yes, there's entertainment, museums, boats. Would you like information on a particular attraction?"}},
+        {{"user": "What is the entrance fee for the parks?"}},
+        {{"system": "The park is free it's called cherry hinton water play would you like the address?"}}
     ]
-}
+}}
 ```
 </prior_conversation>
 <last_user_utterance>"No, but are there any cheap Korean restaurants?"</last_user_utterance>
@@ -76,14 +76,14 @@ You will be presented with a conversation between a user searching for a recomme
 #### Input
 <prior_conversation>
 ```json
-{
+{{
     [
-        {"user": "Can you book a table there for in Bangkok? There will be 6 of us at 16:45 on Saturday."},
-        {"system": "I sure can! Your booking was successful. Is their anything else I can help you with?"},
-        {"user": "Yes, I'm looking for a hotel in the centre of town."},
-        {"system": "There are five in the centre of town. Do you need parking or wifi?"}
+        {{"user": "Can you book a table there for in Bangkok? There will be 6 of us at 16:45 on Saturday."}},
+        {{"system": "I sure can! Your booking was successful. Is their anything else I can help you with?"}},
+        {{"user": "Yes, I'm looking for a hotel in the centre of town."}},
+        {{"system": "There are five in the centre of town. Do you need parking or wifi?"}}
     ]
-}
+}}
 ```
 </prior_conversation>
 <last_user_utterance>I not need internet. I have no preference on parking.</last_user_utterance>

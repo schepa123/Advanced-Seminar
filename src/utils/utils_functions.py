@@ -1,7 +1,11 @@
 import os
 from langchain_core.prompts import ChatPromptTemplate
-from .agent_data_definitions import MetaExpertState
+import sys
+sys.path.append("..")
+from agents_src.agent_data_definitions import MetaExpertState
 from textwrap import dedent
+from langchain_core.prompts.prompt import PromptTemplate
+
 
 
 def get_cwd() -> str:
@@ -49,7 +53,7 @@ def read_file(path: str) -> str:
         return f.read()
 
 
-def return_prompt(prompt_name: str) -> str:
+def return_prompt(prompt_name: str) -> PromptTemplate:
     """
     Returns prompt based on the specifed prompt
     name.
@@ -61,11 +65,13 @@ def return_prompt(prompt_name: str) -> str:
         str: The prompt.
     """
 
-    return read_file(os.path.join(
-        return_root_dir(),
-        "prompts",
-        f"{prompt_name}.md"
-    ))
+    return PromptTemplate.from_file(
+        os.path.join(
+            return_root_dir(),
+            "prompts",
+            f"{prompt_name}.md"
+        )
+    )
 
 
 def build_last_utterance_prompt(state: MetaExpertState) -> str:
