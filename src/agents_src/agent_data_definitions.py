@@ -41,8 +41,6 @@ class MetaExpertState(BaseModel):
         self.last_node.append(node)
 
 
-
-
 class DomainResponse(BaseModel):
     """
     Defines response format of domain extractor
@@ -55,12 +53,15 @@ class DomainResponse(BaseModel):
 
 class SlotDetail(BaseModel):
     """
+    Defines for the slots the explanation why it was extracted and
+    value extracted
     """
     explanation: str = Field(..., description="Why we extracted this value")
     value: str = Field(..., description="The extracted slot value")
 
+
 class SlotValueResponse(BaseModel):
     """
-    123
+    A mapping from *any* slot-name (string) to its SlotDetail.
     """
-    
+    __root__: dict[str, SlotDetail]
