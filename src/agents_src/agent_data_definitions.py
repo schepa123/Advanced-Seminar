@@ -21,6 +21,8 @@ class MetaExpertState(TypedDict, total=False):
     domains: list[str]
     last_action: list[str]
     domain_slots: dict[str, dict[str, str]]
+    extraction_result: dict[str, str]
+    last_verification_results: dict[str, str]
 
 
 class DomainResponse(BaseModel):
