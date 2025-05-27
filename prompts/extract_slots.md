@@ -23,12 +23,10 @@ You will be presented with a conversation between a user searching for a recomme
 }}
 </slot_value_pair>
 <prior_conversation>
-{{
-    [
-        {{"user": "What can you tell me about the bangkok city restaurant?"}},
-        {{"system": "sure, their phone number is 01223354382. anything else today?"}},
-    ]
-}}
+[
+    {{"user": "What can you tell me about the bangkok city restaurant?"}},
+    {{"system": "sure, their phone number is 01223354382. anything else today?"}},
+]
 <latest_user_utterance>"Can you book a table there for me? There will be 6 of us at 16:45 on Saturday."</latest_user_utterance>
 #### Output
 {{
@@ -55,20 +53,18 @@ You will be presented with a conversation between a user searching for a recomme
 }}
 <slot_value_pair>
 <prior_conversation>
-{{
-    [
-        {{"user": "I am looking for a place to eat that is cheap"}},
-        {{"system": "What type of food are you interested in?"}},
-        {{"user": "I'd like some Italian food"}},
-        {{"system": "La Margherita is a great (and cheap!) Italian place on the west side of town. Would you like a table there?"}},
-        {{"user": "Yeah. Can I get one for 8 people on friday at 14:30 please?"}},
-        {{"system": "Absolutely, will you be needing a reference number?"}},
-        {{"user": "Yes, I definitely need the reference number. Thank you."}},
-        {{"system": "Great, you are all booked and ready to go. Your reference number is 8ON7IKVZ. Would you like me to help you with anything else?"}},
-        {{"user": "Well now that you've asked, I would like some information about the kirkwood house hotel"}},
-        {{"system": "It is a moderate price range with internet and parking. Would you like me to book a room?"}},
-    ]
-}}
+[
+    {{"user": "I am looking for a place to eat that is cheap"}},
+    {{"system": "What type of food are you interested in?"}},
+    {{"user": "I'd like some Italian food"}},
+    {{"system": "La Margherita is a great (and cheap!) Italian place on the west side of town. Would you like a table there?"}},
+    {{"user": "Yeah. Can I get one for 8 people on friday at 14:30 please?"}},
+    {{"system": "Absolutely, will you be needing a reference number?"}},
+    {{"user": "Yes, I definitely need the reference number. Thank you."}},
+    {{"system": "Great, you are all booked and ready to go. Your reference number is 8ON7IKVZ. Would you like me to help you with anything else?"}},
+    {{"user": "Well now that you've asked, I would like some information about the kirkwood house hotel"}},
+    {{"system": "It is a moderate price range with internet and parking. Would you like me to book a room?"}},
+]
 </prior_conversation>
 <latest_user_utterance>"Yes I nee to book a room Friday. for 3 nights, 8 people. I'll also need a reference number."</latest_user_utterance>
 #### Output

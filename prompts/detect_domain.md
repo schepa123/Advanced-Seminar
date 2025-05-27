@@ -57,16 +57,12 @@ You will be presented with a conversation between a user searching for a recomme
 ### Example 1
 #### Input
 <prior_conversation>
-```json
-{{
-    [
-        {{"user": "Hello, are there any attractions on the eastside?"}},
-        {{"system": "Yes, there's entertainment, museums, boats. Would you like information on a particular attraction?"}},
-        {{"user": "What is the entrance fee for the parks?"}},
-        {{"system": "The park is free it's called cherry hinton water play would you like the address?"}}
-    ]
-}}
-```
+[
+    {{"user": "Hello, are there any attractions on the eastside?"}},
+    {{"system": "Yes, there's entertainment, museums, boats. Would you like information on a particular attraction?"}},
+    {{"user": "What is the entrance fee for the parks?"}},
+    {{"system": "The park is free it's called cherry hinton water play would you like the address?"}}
+]
 </prior_conversation>
 <latest_user_utterance>"No, but are there any cheap Korean restaurants?"</latest_user_utterance>
 #### Output
@@ -76,14 +72,12 @@ You will be presented with a conversation between a user searching for a recomme
 #### Input
 <prior_conversation>
 ```json
-{{
-    [
-        {{"user": "Can you book a table there for in Bangkok? There will be 6 of us at 16:45 on Saturday."}},
-        {{"system": "I sure can! Your booking was successful. Is their anything else I can help you with?"}},
-        {{"user": "Yes, I'm looking for a hotel in the centre of town."}},
-        {{"system": "There are five in the centre of town. Do you need parking or wifi?"}}
-    ]
-}}
+[
+    {{"user": "Can you book a table there for in Bangkok? There will be 6 of us at 16:45 on Saturday."}},
+    {{"system": "I sure can! Your booking was successful. Is their anything else I can help you with?"}},
+    {{"user": "Yes, I'm looking for a hotel in the centre of town."}},
+    {{"system": "There are five in the centre of town. Do you need parking or wifi?"}}
+]
 ```
 </prior_conversation>
 <latest_user_utterance>I not need internet. I have no preference on parking.</latest_user_utterance>

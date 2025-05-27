@@ -21,7 +21,7 @@ class MetaExpertState(TypedDict, total=False):
         last_verification_results: Latest results of the verification
         process.
     """
-    conversation: list[str]
+    conversation: list[dict[str, str]]
     latest_user_utterance: str
     domains: list[str]
     last_action: list[str]

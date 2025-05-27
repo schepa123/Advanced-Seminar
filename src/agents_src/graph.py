@@ -1,3 +1,5 @@
+from typing import TypeAlias
+from typing_extensions import Literal
 from langgraph.graph import StateGraph, START, MessagesState, END
 from .agent_tools import return_slots
 from langgraph.types import Command
@@ -48,7 +50,7 @@ class agentSystem:
             }
         )
 
-    def extractor_agent(self, state: MetaExpertState) -> Command:
+    def slot_extractor_agent(self, state: MetaExpertState) -> Command:
         """
         123
         """
@@ -58,7 +60,7 @@ class agentSystem:
 class graphState:
     def __init__(
         self,
-        conversation: list[str],
+        conversation: list[dict[str, str]],
         lattest_user_utterance: str,
         system: agentSystem
     ):
@@ -70,8 +72,8 @@ class graphState:
             "last_action": [],
             "domain_slots": {}
         }
-        self.graph = None
-        self.system = system 
+        self.graph = self.create_graph()
+        self.system = system
 
     def create_graph(self):
         graph = (
@@ -80,6 +82,27 @@ class graphState:
                 self.system.domain_extractor_agent,
                 "domain_extractor_agent"
             )
+            .add_node(
+                self.system.slot_extractor_agent,
+                "slot_extractor_agent"
+            )
+            .add_node(
+                self.router_function,
+                "router"
+            )
+            .add_edge(START, "router")
+            .add_edge("domain_extractor_agent", "router")
+            .add_edge("slot_extractor_agent", "router")
+            .add_conditional_edges(
+                "router",
+                self.router,
+                {
+                    
+                }
+                
+            )
+            
+            
             .add_node(print_yes, "print_yes")
             .add_node(step_done, "step_done")
             .add_edge(START, "step_done")
@@ -92,3 +115,11 @@ class graphState:
             .add_edge("print_yes", END)
             .compile()
         )
+
+    def router(self) -> Literal[
+        "domain_extractor_agent", "slot_extractor_agent", "__end__"
+    ]:
+        if not bool(self.state.get("domains")):
+            return "domain_extractor_agent"
+        else:
+            return "slot_extractor_agent"
