@@ -24,10 +24,6 @@ class MetaExpertState(BaseModel):
         default_factory=list,
         description="Last action performed by the multi-agent system."
     )
-    domain_slots: dict[str, dict[str, str]] = Field(
-        default_factory=dict,
-        description="Dict of slots for each domain."
-    )
     extraction_result: dict[str, str] = Field(
         default_factory=dict,
         description="Current results of the extraction process."
