@@ -105,8 +105,8 @@ def build_last_utterance_prompt(state: MetaExpertState) -> str:
         str: The created prompt.
     """
     return dedent(f"""
-    <prior_conversation>{state.get('conversation')}</prior_conversation>
-    <latest_user_utterance>{state.get('latest_user_utterance')}</latest_user_utterance>
+    <prior_conversation>{state.conversation}</prior_conversation>
+    <latest_user_utterance>{state.latest_user_utterance}</latest_user_utterance>
     """)
 
 
@@ -129,12 +129,12 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> str:
     ))
     domains_present = {
         key: value for key, value in slot_dict.items()
-        if key in state.get('domains')
+        if key in state.domains
     }
     print(1)
     last_utterance_prompt = build_last_utterance_prompt(state)
     return dedent(f"""
-        <domain>{state.get('domains')}</domain>
+        <domain>{state.domains}</domain>
         <slot_value_pair>
         {domains_present}
         </slot_value_pair>
@@ -162,4 +162,7 @@ def fix_common_spelling_mistakes(domains: list[str]) -> list[str]:
         "taxi": "taxis",
     }
 
-    return [spelling_fix[domain] for domain in domains]
+    return [
+        spelling_fix[domain] if domain in spelling_fix
+        else domain for domain in domains
+    ]

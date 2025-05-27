@@ -45,7 +45,7 @@ You will be presented with a conversation between a user searching for a recomme
     "restaurant-book day": {{
         "explanation": "The user specified that the system should book the table on Saturday",
         "value": "Saturday"
-    }}
+    }},
     "restaurant-book time": {{
         "explanation": "The user specified that the system should book the table at 16:45",
         "value": "16:45"
@@ -89,8 +89,8 @@ You will be presented with a conversation between a user searching for a recomme
 {{
     "hotel-book stay": {{
         "explanation": "From the prior context it is clear, that the user talks about a hotel reservation. Then he specified that he wants to stay for 3 nights",
-        "value": "3
-    }}
+        "value": "3"
+    }},
     "hotel-book people": {{
         "explanation": "From the prior context it is clear, that the user talks about a hotel reservation. Then he specified that he wants to book the room for eight people",
         "value": "8"

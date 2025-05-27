@@ -29,16 +29,7 @@ class agentSystem:
         )
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
-        """
-        Extracts the domain from the latest user utterance.
 
-        Args:
-            state (MetaExpertState): Current state of the system.
-
-        Returns:
-            Command: Command to update `domain` and `last_node`
-            fields of state.
-        """
         user_prompt = utils_functions.build_last_utterance_prompt(state)
 
         # invoke the agent
@@ -48,12 +39,15 @@ class agentSystem:
         structured: DomainResponse = result["structured_response"]
         domains = structured.domains
 
+        state.push_node("domain_extractor_agent")
+        print(domains)
+
         return Command(
             update={
                 "domains": (
                     utils_functions.fix_common_spelling_mistakes(domains)
                 ),
-                "last_node": ["domain_extractor_agent"]
+                "last_node": state.last_node
             }
         )
 
@@ -115,14 +109,13 @@ class graphState:
                 }
                 
             )
-            
-            
+
             .add_node(print_yes, "print_yes")
             .add_node(step_done, "step_done")
             .add_edge(START, "step_done")
             .add_conditional_edges(
                 "step_done",
-                lambda st: not bool(st.get("domains")),
+                lambda st: not bool(st.domains),
                 {True: "domain_extractor_agent", False: "print_yes"},
             )
             .add_edge("domain_extractor_agent", "step_done")
@@ -133,7 +126,7 @@ class graphState:
     def router(self) -> Literal[
         "domain_extractor_agent", "slot_extractor_agent", "__end__"
     ]:
-        if not bool(self.state.get("domains")):
+        if not bool(self.state.domains):
             return "domain_extractor_agent"
         else:
             return "slot_extractor_agent"

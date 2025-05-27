@@ -1,35 +1,50 @@
 from typing import TypedDict, Annotated
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langgraph.graph.message import add_messages
 
 
-
-class MetaExpertState(TypedDict, total=False):
+class MetaExpertState(BaseModel):
     """
     Meta Expert memory slots.
-
-    Attributes:
-        conversation: A list of the conversation between
-        the meta experts and other agents.
-        latest_user_utterance: The latest user utterance
-        domains: Which domains are present in this dialogue
-        turn of the dataset.
-        last_action: Last action performed by the multi agent
-        system.
-        domain_slots: Dict of slots for each domain.
-        extraction_results: Current results of the extraction process.
-        last_verification_results: Latest results of the verification
-        process.
-        last_node: Last node that was executed.
     """
-    conversation: list[dict[str, str]]
-    latest_user_utterance: str
-    domains: list[str]
-    last_action: list[str]
-    domain_slots: dict[str, dict[str, str]]
-    extraction_result: dict[str, str]
-    last_verification_results: dict[str, str]
-    last_node: Annotated[list[str], add_messages]
+
+    conversation: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="A list of the conversation between the meta experts and other agents."
+    )
+    latest_user_utterance: str = Field(
+        default_factory=str,
+        description="The latest user utterance."
+    )
+    domains: list[str] = Field(
+        default_factory=list,
+        description="Which domains are present in this dialogue turn of the dataset."
+    )
+    last_action: list[str] = Field(
+        default_factory=list,
+        description="Last action performed by the multi-agent system."
+    )
+    domain_slots: dict[str, dict[str, str]] = Field(
+        default_factory=dict,
+        description="Dict of slots for each domain."
+    )
+    extraction_result: dict[str, str] = Field(
+        default_factory=dict,
+        description="Current results of the extraction process."
+    )
+    last_verification_results: dict[str, str] = Field(
+        default_factory=dict,
+        description="Latest results of the verification process."
+    )
+    last_node: list[str] = Field(
+        default_factory=list,
+        description="Last node that was executed."
+    )
+
+    def push_node(self, node: str):
+        self.last_node.append(node)
+
+
 
 
 class DomainResponse(BaseModel):
@@ -40,3 +55,16 @@ class DomainResponse(BaseModel):
         domains: A list of extracted domains
     """
     domains: list[str]
+
+
+class SlotDetail(BaseModel):
+    """
+    """
+    explanation: str = Field(..., description="Why we extracted this value")
+    value: str = Field(..., description="The extracted slot value")
+
+class SlotValueResponse(BaseModel):
+    """
+    123
+    """
+    
