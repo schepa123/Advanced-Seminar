@@ -134,6 +134,7 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> str:
     print(1)
     last_utterance_prompt = build_last_utterance_prompt(state)
     return dedent(f"""
+        <domain>{state.get('domains')}</domain>
         <slot_value_pair>
         {domains_present}
         </slot_value_pair>
