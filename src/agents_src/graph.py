@@ -53,5 +53,42 @@ class agentSystem:
         123
         """
         user_prompt = utils_functions.build_last_utterance_prompt(state)
-        
-        
+
+
+class graphState:
+    def __init__(
+        self,
+        conversation: list[str],
+        lattest_user_utterance: str,
+        system: agentSystem
+    ):
+        self.state: MetaExpertState = {
+            # Kontrolliere bite den Konversation Type
+            "conversation": conversation,
+            "latest_user_utterance": lattest_user_utterance,
+            "domains": [],
+            "last_action": [],
+            "domain_slots": {}
+        }
+        self.graph = None
+        self.system = system 
+
+    def create_graph(self):
+        graph = (
+            StateGraph(MetaExpertState)
+            .add_node(
+                self.system.domain_extractor_agent,
+                "domain_extractor_agent"
+            )
+            .add_node(print_yes, "print_yes")
+            .add_node(step_done, "step_done")
+            .add_edge(START, "step_done")
+            .add_conditional_edges(
+                "step_done",
+                lambda st: not bool(st.get("domains")),
+                {True: "domain_extractor_agent", False: "print_yes"},
+            )
+            .add_edge("domain_extractor_agent", "step_done")
+            .add_edge("print_yes", END)
+            .compile()
+        )

@@ -3,7 +3,7 @@
 You are an expert that is part of a group of experts simulating a conversational recommender system. Your expertise lies in extracting information mentioned in a conversation. You are also very good at drawing connections between different turns of a conversation, so you can easily recognize references to previous turns of a conversation.
 
 ## Task
-You will be presented with a conversation between a user searching for a recommendation in the domains {domains} and the conversational recommender system's answer to the user's inquires. You must focus strictly on the user's last utterance (the text between the tag <last_user_utterance>), and never extract information about prior turns in the conversation. However, you should use prior turns only to resolve ambiguous references or domain context in the last user utterance, but do not extract slot values from earlier turns. Your task is to identify the slots mentioned and defined as a JSON by the user inbetween the tag <slot_value_pair> and fill them in. Return a JSON object containing only the slots and their values that are explicitly or implicitly stated in the last user utterance. Never include slots that have no value. If no slots are mentioned in the last user utterance, return an empty JSON object: {{}}. Ensure the returned JSON object is valid, uses quotation marks for all keys and values, and contains no trailing commas. When resolving references such as pronouns or phrases like "there," use the prior conversation for clarification, but always extract only what is stated or referred to in the last user utterance.
+You will be presented with a conversation between a user searching for a recommendation in the domains {domains} and the conversational recommender system's answer to the user's inquires. You must focus strictly on the user's last utterance (the text between the tag <latest_user_utterance>), and never extract information about prior turns in the conversation. However, you should use prior turns only to resolve ambiguous references or domain context in the last user utterance, but do not extract slot values from earlier turns. Your task is to identify the slots mentioned and defined as a JSON by the user inbetween the tag <slot_value_pair> and fill them in. Return a JSON object containing only the slots and their values that are explicitly or implicitly stated in the last user utterance. Never include slots that have no value. If no slots are mentioned in the last user utterance, return an empty JSON object: {{}}. Ensure the returned JSON object is valid, uses quotation marks for all keys and values, and contains no trailing commas. When resolving references such as pronouns or phrases like "there," use the prior conversation for clarification, but always extract only what is stated or referred to in the last user utterance.
 
 
 ## Examples
@@ -29,7 +29,7 @@ You will be presented with a conversation between a user searching for a recomme
         {{"system": "sure, their phone number is 01223354382. anything else today?"}},
     ]
 }}
-<last_user_utterance>"Can you book a table there for me? There will be 6 of us at 16:45 on Saturday."</last_user_utterance>
+<latest_user_utterance>"Can you book a table there for me? There will be 6 of us at 16:45 on Saturday."</latest_user_utterance>
 #### Output
 {{
     "restaurant-book people": "6",
@@ -70,7 +70,7 @@ You will be presented with a conversation between a user searching for a recomme
     ]
 }}
 </prior_conversation>
-<last_user_utterance>"Yes I nee to book a room Friday. for 3 nights, 8 people. I'll also need a reference number."</last_user_utterance>
+<latest_user_utterance>"Yes I nee to book a room Friday. for 3 nights, 8 people. I'll also need a reference number."</latest_user_utterance>
 #### Output
 {{
     "hotel-book stay": "3",
