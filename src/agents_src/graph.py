@@ -11,7 +11,6 @@ from utils import utils_functions
 from textwrap import dedent
 
 
-
 class agentSystem:
     def __init__(self, model_name="openai:o4-mini-2025-04-16"):
         self.model = init_chat_model(model_name)
@@ -23,11 +22,17 @@ class agentSystem:
         )
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
-        # build your prompt
-        user_prompt = dedent(f"""
-        <prior_conversation>{state.get('conversation')}</prior_conversation>
-        <last_turn>{state.get('latest_user_utterance')}</last_turn>
-        """)
+        """
+        Extracts the domain from the last turn of a conversation.
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to update `domain` and `last_node`
+            fields of state.
+        """
+        user_prompt = utils_functions.build_last_utterance_prompt(state)
 
         # invoke the agent
         result = self.domain_extractor.invoke({
@@ -43,3 +48,10 @@ class agentSystem:
             }
         )
 
+    def extractor_agent(self, state: MetaExpertState) -> Command:
+        """
+        123
+        """
+        user_prompt = utils_functions.build_last_utterance_prompt(state)
+        
+        
