@@ -6,10 +6,15 @@ from langgraph.types import Command
 import json
 
 
-from .agent_data_definitions import DomainResponse, MetaExpertState
+from .agent_data_definitions import (
+    DomainResponse,
+    MetaExpertState,
+    SlotValueResponse
+)
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.runnables import RunnableSerializable
 from utils import utils_functions
 from textwrap import dedent
 
@@ -23,24 +28,41 @@ class agentSystem:
             prompt=utils_functions.return_prompt("detect_domain"),
             response_format=DomainResponse
         )
-        self.slot_extractor_agent = LLMChain(
-            llm=self.model,
-            prompt=utils_functions.return_prompt("extract_slots")
-        )
+        self.slot_extractor = self.create_slot_extractor()
+
+    def create_slot_extractor(self) -> RunnableSerializable:
+        """
+        Created the chain for the slot extractor
+
+        Args:
+            None
+
+        Returns:
+            RunnableSerializable:  Chain of prompt with LLM and parser
+
+        """
+        prompt = utils_functions.return_prompt("extract_slots")
+        parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
+
+        return prompt | self.model | parser
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
+        """
+        Domain extractor agent execution handler
 
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to Langgraph to update
+        """
         user_prompt = utils_functions.build_last_utterance_prompt(state)
-
-        # invoke the agent
         result = self.domain_extractor.invoke({
             "messages": [{"role": "user", "content": user_prompt}]
         })
         structured: DomainResponse = result["structured_response"]
         domains = structured.domains
-
         state.push_node("domain_extractor_agent")
-        print(domains)
 
         return Command(
             update={
@@ -62,7 +84,21 @@ class agentSystem:
             Command: Command to update `extraction_result` and `last_node`
             fields of state.
         """
-        user_prompt = utils_functions.build_last_utterance_prompt(state)
+        user_prompt = utils_functions.build_slot_extraction_prompt(state)
+        result = self.slot_extractor.invoke({
+            "messages": [{"role": "user", "content": user_prompt}]
+        })
+        result
+        structured: SlotValueResponse = result["structured_response"]
+        slot_values = structured.__root__
+        state.push_node("slot_extractor_agent")
+
+        return Command(
+            update={
+                "extraction_result": (slot_values),
+                "last_node": state.last_node
+            }
+        )
 
 
 class graphState:

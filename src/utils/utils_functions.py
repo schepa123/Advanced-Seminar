@@ -83,7 +83,6 @@ def return_prompt(prompt_name: str) -> PromptTemplate:
     Returns:
         str: The prompt.
     """
-
     return PromptTemplate.from_file(
         os.path.join(
             return_root_dir(),
@@ -131,7 +130,6 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> str:
         key: value for key, value in slot_dict.items()
         if key in state.domains
     }
-    print(1)
     last_utterance_prompt = build_last_utterance_prompt(state)
     return dedent(f"""
         <domain>{state.domains}</domain>

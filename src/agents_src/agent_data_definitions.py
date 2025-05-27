@@ -1,5 +1,5 @@
 from typing import TypedDict, Annotated
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from langgraph.graph.message import add_messages
 
 
@@ -60,8 +60,9 @@ class SlotDetail(BaseModel):
     value: str = Field(..., description="The extracted slot value")
 
 
-class SlotValueResponse(BaseModel):
+class SlotValueResponse(RootModel[dict[str, SlotDetail]]):
+
     """
     A mapping from *any* slot-name (string) to its SlotDetail.
     """
-    __root__: dict[str, SlotDetail]
+    pass
