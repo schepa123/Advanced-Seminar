@@ -81,5 +81,5 @@ def build_last_utterance_prompt(state: MetaExpertState) -> str:
     """
     return dedent(f"""
     <prior_conversation>{state.get('conversation')}</prior_conversation>
-    <last_turn>{state.get('latest_user_utterance')}</last_turn>
+    <last_user_utterance>{state.get('latest_user_utterance')}</last_user_utterance>
     """)

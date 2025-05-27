@@ -5,7 +5,7 @@ You are an expert that is part of a group of experts simulating a conversational
 
 ## Task
 
-You will be presented with a conversation between a user searching for a recommendation in a certain domain(s) and the system’s answers to the user's inquiries. Please note that a conversation can include multiple domains or only a single domain; you must always answer with all domains present. Your task is to focus strictly on the user's last turn to identify the domains for which a recommendation is sought. However, keep in mind all prior conversation turns to recognize indirect domain implications. Ensure your response includes **ONLY** the domain names from the list: ["Hotel", "Train", "Attraction", "Restaurant", "Taxi", "Bus"] and return the domain(s) as element(s) of a list, e.g. [`domain`].  
+You will be presented with a conversation between a user searching for a recommendation in a certain domain(s) and the system’s answers to the user's inquiries. Please note that a conversation can include multiple domains or only a single domain; you must always answer with all domains present. Your task is to focus strictly on the user's last utterance (the text between the tag <last_user_utterance>) to identify the domains for which a recommendation is sought. However, keep in mind all prior conversation turns to recognize indirect domain implications. Ensure your response includes **ONLY** the domain names from the list: ["Hotel", "Train", "Attraction", "Restaurant", "Taxi", "Bus"] and return the domain(s) as element(s) of a list, e.g. [`domain`].  
 
 - **Note on Edge Cases**: If the user's last turn implies multiple domains within context, identify all relevant domains. In cases where no specific domain is mentioned, respond with an empty list format [].
 
@@ -68,7 +68,7 @@ You will be presented with a conversation between a user searching for a recomme
 }
 ```
 </prior_conversation>
-<last_turn>"No, but are there any cheap Korean restaurants?"</last_turn>
+<last_user_utterance>"No, but are there any cheap Korean restaurants?"</last_user_utterance>
 #### Output
 [Restaurant]
 
@@ -86,6 +86,6 @@ You will be presented with a conversation between a user searching for a recomme
 }
 ```
 </prior_conversation>
-<last_turn>I not need internet. I have no preference on parking.</last_turn>
+<last_user_utterance>I not need internet. I have no preference on parking.</last_user_utterance>
 #### Output
 [Hotel]
