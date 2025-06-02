@@ -29,10 +29,27 @@ class agentSystem:
             response_format=DomainResponse
         )
         self.slot_extractor = self.create_slot_extractor()
+        self.verifier = self.create_verifier()
 
     def create_slot_extractor(self) -> RunnableSerializable:
         """
-        Created the chain for the slot extractor
+        Created the chain for the slot extractor.
+
+        Args:
+            None
+
+        Returns:
+            RunnableSerializable:  Chain of prompt with LLM and parser.
+
+        """
+        prompt = utils_functions.return_prompt("extract_slots")
+        parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
+
+        return prompt | self.model | parser
+
+    def create_verifier(self) -> RunnableSerializable:
+        """
+        Created the chain for the verifier.
 
         Args:
             None
@@ -41,11 +58,12 @@ class agentSystem:
             RunnableSerializable:  Chain of prompt with LLM and parser
 
         """
+        
         prompt = utils_functions.return_prompt("extract_slots")
         parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
 
         return prompt | self.model | parser
-
+    
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
         """
         Domain extractor agent execution handler
@@ -90,13 +108,41 @@ class agentSystem:
         print(result)
         result = {key: value for key, value in dict(result)["root"].items()}
         state.push_node("slot_extractor_agent")
+        updated_conv_list = state.conversation + [{
+            "user": state.latest_user_utterance
+        }]
 
         return Command(
             update={
                 "extraction_result": result,
+                "conversation": updated_conv_list,
                 "last_node": state.last_node
             }
         )
+
+    def verifier_agent(self, state: MetaExpertState) -> Command:
+        """
+        123
+        """
+    
+    def router_function(self, state: MetaExpertState) -> Command[Literal[
+        "domain_extractor_agent", "slot_extractor_agent"
+    ]]:
+        """
+        Takes state of graph and decides next stept.
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to execute next node
+        """
+        if not bool(state.domains):
+            print("Command → domain_extractor_agent")
+            return Command(update={}, goto="domain_extractor_agent")
+        else:
+            print("Command → slot_extractor_agent")
+            return Command(update={}, goto="slot_extractor_agent")
 
 
 class graphState:
@@ -114,8 +160,8 @@ class graphState:
             "last_action": [],
             "domain_slots": {}
         }
-        self.graph = self.create_graph()
         self.system = system
+        self.graph = self.create_graph()
 
     def create_graph(self):
         graph = (
@@ -129,38 +175,17 @@ class graphState:
                 "slot_extractor_agent"
             )
             .add_node(
-                self.router_function,
-                "router"
+                self.system.router_function,
+                "router_function"
             )
-            .add_edge(START, "router")
-            .add_edge("domain_extractor_agent", "router")
-            .add_edge("slot_extractor_agent", "router")
-            .add_conditional_edges(
-                "router",
-                self.router,
-                {
-                    
-                }
-                
-            )
-
-            .add_node(print_yes, "print_yes")
-            .add_node(step_done, "step_done")
-            .add_edge(START, "step_done")
-            .add_conditional_edges(
-                "step_done",
-                lambda st: not bool(st.domains),
-                {True: "domain_extractor_agent", False: "print_yes"},
-            )
-            .add_edge("domain_extractor_agent", "step_done")
-            .add_edge("print_yes", END)
+            .add_edge(START, "router_function")
+            .add_edge("domain_extractor_agent", "router_function")
+            .add_edge("slot_extractor_agent", END)
             .compile()
         )
+        return graph
 
-    def router(self) -> Literal[
-        "domain_extractor_agent", "slot_extractor_agent", "__end__"
-    ]:
-        if not bool(self.state.domains):
-            return "domain_extractor_agent"
-        else:
-            return "slot_extractor_agent"
+    def invoke(self):
+        return self.graph.invoke(self.state)
+
+    
