@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, START, MessagesState, END
 from .agent_tools import return_slots
 from langgraph.types import Command
 import json
+import uuid
 
 
 from .agent_data_definitions import (
@@ -56,14 +57,13 @@ class agentSystem:
 
         Returns:
             RunnableSerializable:  Chain of prompt with LLM and parser
-
         """
-        
+
         prompt = utils_functions.return_prompt("extract_slots")
         parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
 
         return prompt | self.model | parser
-    
+
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
         """
         Domain extractor agent execution handler
@@ -105,8 +105,12 @@ class agentSystem:
         user_prompt = utils_functions.build_slot_extraction_prompt(state)
         result = self.slot_extractor.invoke(user_prompt)
 
+        result = {
+            key: {"uuid": str(uuid.uuid4())[:8], "value": value}
+            for key, value in dict(result)["root"].items()
+        }
         print(result)
-        result = {key: value for key, value in dict(result)["root"].items()}
+
         state.push_node("slot_extractor_agent")
         updated_conv_list = state.conversation + [{
             "user": state.latest_user_utterance
@@ -124,7 +128,7 @@ class agentSystem:
         """
         123
         """
-    
+
     def router_function(self, state: MetaExpertState) -> Command[Literal[
         "domain_extractor_agent", "slot_extractor_agent"
     ]]:
@@ -137,6 +141,7 @@ class agentSystem:
         Returns:
             Command: Command to execute next node
         """
+        # TODO: https://langchain-ai.github.io/langgraph/how-tos/graph-api/#add-retry-policies
         if not bool(state.domains):
             print("Command → domain_extractor_agent")
             return Command(update={}, goto="domain_extractor_agent")
@@ -149,17 +154,12 @@ class graphState:
     def __init__(
         self,
         conversation: list[dict[str, str]],
-        lattest_user_utterance: str,
+        latest_user_utterance: str,
         system: agentSystem
     ):
-        self.state: MetaExpertState = {
-            # Kontrolliere bite den Konversation Type
-            "conversation": conversation,
-            "latest_user_utterance": lattest_user_utterance,
-            "domains": [],
-            "last_action": [],
-            "domain_slots": {}
-        }
+        self.state: None
+        self.conversation = conversation
+        self.latest_user_utterance = latest_user_utterance
         self.system = system
         self.graph = self.create_graph()
 
@@ -186,6 +186,15 @@ class graphState:
         return graph
 
     def invoke(self):
-        return self.graph.invoke(self.state)
+        self.state = self.graph.invoke({
+            # Kontrolliere bite den Konversation Type
+            "conversation": self.conversation,
+            "latest_user_utterance": self.latest_user_utterance,
+            "domains": [],
+            "last_action": [],
+            "domain_slots": {},
+            "extraction_result": {}
+            }
+        )
 
     
