@@ -85,17 +85,15 @@ class agentSystem:
             fields of state.
         """
         user_prompt = utils_functions.build_slot_extraction_prompt(state)
-        result = self.slot_extractor.invoke({
-            "messages": [{"role": "user", "content": user_prompt}]
-        })
-        result
-        structured: SlotValueResponse = result["structured_response"]
-        slot_values = structured.__root__
+        result = self.slot_extractor.invoke(user_prompt)
+
+        print(result)
+        result = {key: value for key, value in dict(result)["root"].items()}
         state.push_node("slot_extractor_agent")
 
         return Command(
             update={
-                "extraction_result": (slot_values),
+                "extraction_result": result,
                 "last_node": state.last_node
             }
         )

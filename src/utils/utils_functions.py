@@ -1,4 +1,6 @@
 import os
+import json
+import re
 from langchain_core.prompts import ChatPromptTemplate
 import sys
 import yaml
@@ -37,7 +39,7 @@ def return_root_dir() -> str:
     return os.path.dirname(
         os.path.dirname(path)
     )
-
+    
 
 def read_file(path: str) -> str:
     """
@@ -92,6 +94,23 @@ def return_prompt(prompt_name: str) -> PromptTemplate:
     )
 
 
+def replace_single_curly_brackets(string_value: str) -> str:
+    """
+    Replaces every instance of single curly brackets with two
+    curly brackets.
+    
+    Args:
+        string_value (str): String to modify.
+    
+    Returns:
+        str: Modified string.
+    """
+    text = re.sub(r'(?<!\{)\{(?!\{)', r'{{', string_value)
+    # 2) Replace every single “}” (not part of “}}”) → “}}”
+    text = re.sub(r'(?<!\})\}(?!\})', r'}}', string_value)
+    return text
+
+
 def build_last_utterance_prompt(state: MetaExpertState) -> str:
     """
     Builds the prompt combining the prior conversation and the
@@ -109,7 +128,7 @@ def build_last_utterance_prompt(state: MetaExpertState) -> str:
     """)
 
 
-def build_slot_extraction_prompt(state: MetaExpertState) -> str:
+def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
     """
     Build the slot extraction prompt by combining the slots definition
     present in the latest user utterance with the last utterance prompt
@@ -126,18 +145,26 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> str:
         "agents_src",
         "domain_slots.yml"
     ))
-    domains_present = {
+    slots_present = {
         key: value for key, value in slot_dict.items()
         if key in state.domains
     }
-    last_utterance_prompt = build_last_utterance_prompt(state)
-    return dedent(f"""
-        <domain>{state.domains}</domain>
-        <slot_value_pair>
-        {domains_present}
-        </slot_value_pair>
-        {last_utterance_prompt}
-    """)
+
+    latest_user_utterance = state.latest_user_utterance
+
+    user_prompt_dict = {
+        "domain": state.domains,
+        "slot_value_pair": replace_single_curly_brackets(
+            json.dumps(slots_present)
+        ),
+        "prior_conversation": replace_single_curly_brackets(
+            json.dumps(state.conversation)
+        ),
+        "latest_user_utterance": latest_user_utterance
+    }
+    user_prompt_dict
+
+    return user_prompt_dict
 
 
 def fix_common_spelling_mistakes(domains: list[str]) -> list[str]:
