@@ -31,7 +31,7 @@ You will be presented with:
 - Ensure the output is valid JSON, with quotation marks around all keys and values, and no trailing commas.
 
 ## Examples
-### Examples 1
+### Example 1
 #### Input
 <domain>train</domain>
 <slot_value_pair>
@@ -57,15 +57,24 @@ You will be presented with:
 <extraction_results>
 {{
     "train-arriveby": {{
+        "uuid": "a667bc35",
         "explanation": "The user specified that he wants to arrive in Cambridge at 12:30.",
         "value": "12:30"
     }},
+
+    'hotel-pricerange': {'uuid': 'a667bc35',
+   'value': SlotDetail(explanation='The user specified they want a hotel with a cheap price range.', value='cheap')}
     "train-day": {{
         "explanation": "The user wants to be in Cambridge on Saturday.",
         "value": "Saturday"
     }}
 }}
 </extraction_results>
+
 #### Output
 ```json
 {{}}
+````
+
+### Example 1
+#### Input

@@ -29,37 +29,19 @@ class agentSystem:
             prompt=utils_functions.return_prompt("detect_domain"),
             response_format=DomainResponse
         )
-        self.slot_extractor = self.create_slot_extractor()
-        self.verifier = self.create_verifier()
+        self.slot_extractor = self.create_agent(prompt_name="extract_slots")
+        self.verifier = self.create_agent(prompt_name="verify_results")
 
-    def create_slot_extractor(self) -> RunnableSerializable:
+    def create_agent(self, prompt_name) -> RunnableSerializable:
         """
-        Created the chain for the slot extractor.
+        Creates the chain for an agent.
 
         Args:
             None
-
         Returns:
             RunnableSerializable:  Chain of prompt with LLM and parser.
-
         """
-        prompt = utils_functions.return_prompt("extract_slots")
-        parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
-
-        return prompt | self.model | parser
-
-    def create_verifier(self) -> RunnableSerializable:
-        """
-        Created the chain for the verifier.
-
-        Args:
-            None
-
-        Returns:
-            RunnableSerializable:  Chain of prompt with LLM and parser
-        """
-
-        prompt = utils_functions.return_prompt("extract_slots")
+        prompt = utils_functions.return_prompt(prompt_name)
         parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
 
         return prompt | self.model | parser
@@ -106,7 +88,7 @@ class agentSystem:
         result = self.slot_extractor.invoke(user_prompt)
 
         result = {
-            key: {"uuid": str(uuid.uuid4())[:8], "value": value}
+            key: {"uuid": str(uuid.uuid4())[:8], "value": dict(value)}
             for key, value in dict(result)["root"].items()
         }
         print(result)
@@ -197,4 +179,3 @@ class graphState:
             }
         )
 
-    
