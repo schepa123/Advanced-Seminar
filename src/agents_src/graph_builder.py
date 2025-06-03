@@ -10,7 +10,8 @@ import uuid
 from .agent_data_definitions import (
     DomainResponse,
     MetaExpertState,
-    SlotValueResponse
+    SlotValueResponse,
+    VerificationResult
 )
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
@@ -42,7 +43,10 @@ class agentSystem:
             RunnableSerializable:  Chain of prompt with LLM and parser.
         """
         prompt = utils_functions.return_prompt(prompt_name)
-        parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
+        if prompt_name == "extract_slots":
+            parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
+        elif prompt_name == "verify_results":
+            parser = PydanticOutputParser(pydantic_object=VerificationResult)
 
         return prompt | self.model | parser
 
@@ -91,7 +95,6 @@ class agentSystem:
             key: {"uuid": str(uuid.uuid4())[:8], "value": dict(value)}
             for key, value in dict(result)["root"].items()
         }
-        print(result)
 
         state.push_node("slot_extractor_agent")
         updated_conv_list = state.conversation + [{
@@ -108,11 +111,48 @@ class agentSystem:
 
     def verifier_agent(self, state: MetaExpertState) -> Command:
         """
+        Verifies the extracted slot-value pairs.
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to update `extraction_result` and `last_node`
+            fields of state.
+        """
+        user_prompt = utils_functions.build_verification_prompt(state)
+        result = self.verifier.invoke(user_prompt)
+
+        result = {
+            key: value
+            for key, value in dict(result)["root"].items()
+        }
+        state.push_node("slot_extractor_agent")
+        return Command(
+            update={
+                "last_verification_results": result,
+                "last_node": state.last_node
+            }
+        )
+
+    def check_if_verification_finished(self, state: MetaExpertState) -> (
+        Command[Literal["verifier_agent", END]]
+    ):
+        """
         123
         """
+        if state.last_node[-1] == "slot_extractor_agent":
+            print("Command -> END")
+            return Command(update={}, goto=END)
+            #print("Command -> verifier_agent")
+            #return Command(update={}, goto="verifier_agent")
+        else:
+            print("Command -> END")
+            return Command(update={}, goto=END)
 
     def router_function(self, state: MetaExpertState) -> Command[Literal[
-        "domain_extractor_agent", "slot_extractor_agent"
+        "domain_extractor_agent", "slot_extractor_agent", "verifier_agent",
+        END
     ]]:
         """
         Takes state of graph and decides next stept.
@@ -125,11 +165,14 @@ class agentSystem:
         """
         # TODO: https://langchain-ai.github.io/langgraph/how-tos/graph-api/#add-retry-policies
         if not bool(state.domains):
-            print("Command → domain_extractor_agent")
+            print("Command -> domain_extractor_agent")
             return Command(update={}, goto="domain_extractor_agent")
         else:
-            print("Command → slot_extractor_agent")
-            return Command(update={}, goto="slot_extractor_agent")
+            if not bool(state.extraction_result):
+                print("Command -> slot_extractor_agent")
+                return Command(update={}, goto="slot_extractor_agent")
+            else:
+                return self.check_if_verification_finished(state)
 
 
 class graphState:
@@ -157,25 +200,42 @@ class graphState:
                 "slot_extractor_agent"
             )
             .add_node(
+                self.system.verifier_agent,
+                "verifier_agent"
+            )
+            .add_node(
                 self.system.router_function,
                 "router_function"
             )
             .add_edge(START, "router_function")
             .add_edge("domain_extractor_agent", "router_function")
-            .add_edge("slot_extractor_agent", END)
+            .add_edge("slot_extractor_agent", "router_function")
+            #.add_edge("slot_extractor_agent", END)
+            .add_edge("verifier_agent", "router_function")
+            .add_edge("router_function", END)
             .compile()
         )
         return graph
 
-    def invoke(self):
-        self.state = self.graph.invoke({
-            # Kontrolliere bite den Konversation Type
-            "conversation": self.conversation,
-            "latest_user_utterance": self.latest_user_utterance,
-            "domains": [],
-            "last_action": [],
-            "domain_slots": {},
-            "extraction_result": {}
-            }
-        )
+    def invoke(self, state=None):
+        if state is None:
+            self.state = self.graph.invoke({
+                "conversation": self.conversation,
+                "latest_user_utterance": self.latest_user_utterance,
+                "domains": [],
+                "last_action": [],
+                "domain_slots": {},
+                "extraction_result": {}
+                }
+            )
+        else:
+            self.state = self.graph.invoke({
+                "conversation": state.conversation,
+                "latest_user_utterance": state.latest_user_utterance,
+                "domains": state.domains,
+                "last_action": state.last_action,
+                "domain_slots": {},
+                "extraction_result": state.extraction_result
+                }
+            )
 

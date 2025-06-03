@@ -39,7 +39,7 @@ def return_root_dir() -> str:
     return os.path.dirname(
         os.path.dirname(path)
     )
-    
+
 
 def read_file(path: str) -> str:
     """
@@ -98,10 +98,10 @@ def replace_single_curly_brackets(string_value: str) -> str:
     """
     Replaces every instance of single curly brackets with two
     curly brackets.
-    
+
     Args:
         string_value (str): String to modify.
-    
+
     Returns:
         str: Modified string.
     """
@@ -150,8 +150,6 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
         if key in state.domains
     }
 
-    latest_user_utterance = state.latest_user_utterance
-
     user_prompt_dict = {
         "domain": state.domains,
         "slot_value_pair": replace_single_curly_brackets(
@@ -160,9 +158,39 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
         "prior_conversation": replace_single_curly_brackets(
             json.dumps(state.conversation)
         ),
-        "latest_user_utterance": latest_user_utterance
+        "latest_user_utterance": state.latest_user_utterance
     }
-    user_prompt_dict
+
+    return user_prompt_dict
+
+
+def build_verification_prompt(state: MetaExpertState) -> dict[str, str]:
+    """123"""
+    slot_dict = read_yml(path=os.path.join(
+        return_root_dir(),
+        "src",
+        "agents_src",
+        "domain_slots.yml"
+    ))
+    slots_present = {
+        key: value for key, value in slot_dict.items()
+        #if key in state.domains
+        if key in state["domains"]
+    }
+
+    user_prompt_dict = {
+        #"domain": state.domains,
+        "domain": state["domains"],
+        "slot_value_pair_description": replace_single_curly_brackets(
+            json.dumps(slots_present)
+        ),
+        "prior_conversation": replace_single_curly_brackets(
+            #json.dumps(state.conversation)
+            json.dumps(state["conversation"])
+        ),
+        "latest_user_utterance": state["latest_user_utterance"],
+        "extraction_results": state["extraction_result"]
+    }
 
     return user_prompt_dict
 
