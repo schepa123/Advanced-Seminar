@@ -73,6 +73,10 @@ class VerificationDetail(BaseModel):
     Defines for the slots the explanation why the result was corrected and
     a boolean indicating if true.
     """
+    value: str = Field(
+        ...,
+        description="The value from the extraction process"
+    )
     explanation: str = Field(
         ...,
         description="The explanation why this result was correct/incorrect"

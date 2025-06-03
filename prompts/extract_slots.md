@@ -26,7 +26,6 @@ You will be presented with:
 - Ensure the output is valid JSON, with quotation marks around all keys and values, and no trailing commas.
 
 ## Examples
-
 ### Example 1
 #### Input
 <domain>restaurant</domain>
