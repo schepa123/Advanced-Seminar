@@ -25,9 +25,10 @@ You will be presented with:
 - Base your verification on the definition of the slot as defined in `{slot_value_pair_description}`.
 - Return a valid JSON object mapping each element from <extraction_results> to an object with the following format:
     - The key should be the "uuid" of the element
-    - The values should be a dict with two keys
-        1. "explanation": A concise (≤2 sentences) reason why think that the result is correct or incorrect.
-        2. "boolean": A boolean value indicating your assement; `true` if the extraction result is correct, `false` if it is incorrect.
+    - The values should be a dict with three keys
+        1. "value": The value from the JSON object
+        2. "explanation": A concise (≤2 sentences) reason why think that the result is correct or incorrect.
+        3. "boolean": A boolean value indicating your assement; `true` if the extraction result is correct, `false` if it is incorrect.
 - You must check every element from <extraction_result>.
 - Ensure the output is valid JSON, with quotation marks around all keys and values, and no trailing commas.
 
@@ -78,14 +79,17 @@ You will be presented with:
 ```json
 {{
     "a667bc35": {{
+        "value": "12:30",
         "explanation": "The user indeed specified that he wants arrive at 12:30",
         "boolean": "true"
     }},
     "411fdf70": {{
+        "value": "Cambridge",
         "explanation": "It is stated clearly that the user wants to travel to Cambridge",
         "boolean": "true"
     }},
     "14e6e5cd": {{
+        "value": "Sunday",
         "explanation": "The user stated the he wants to travel on either Sunday or Saturday. He hasn't decided on Sunday yet.",
         "boolean": "false"
     }}
@@ -135,10 +139,12 @@ I would prefer to be in the centre of town.
 ```json
 {{
     "60b10878": {{
+        "value": "center",
         "explanation": "It was clearly stated that hotel should be in centre of the town, so this answer is correct.",
         "boolean": "true"
     }},
     "d4761951": {{
+        "value": "yes",
         "explanation": "While it is correct, that the hotel should have parking, this was not stated in the last user utterance and therefore should not be extracted in this case.",
         "boolean": "false"
     }}
