@@ -39,6 +39,7 @@ class MetaExpertState(BaseModel):
 
     def push_node(self, node: str):
         self.last_node.append(node)
+        print(f"self.last_node: {self.last_node}")
 
 
 class DomainResponse(BaseModel):
@@ -90,5 +91,18 @@ class VerificationDetail(BaseModel):
 class VerificationResult(RootModel[dict[str, VerificationDetail]]):
     """
     A mapping from *any* UUID (string) to the VerificationDetail.
+    """
+    pass
+
+
+class VerificationDetail(BaseModel):
+    value: str 
+    explanation: str
+    boolean: bool
+
+
+class VerificationResponse(RootModel[dict[str, VerificationDetail]]):
+    """
+    Top‐level: maps UUID (as string) → VerificationDetail
     """
     pass

@@ -11,7 +11,7 @@ from .agent_data_definitions import (
     DomainResponse,
     MetaExpertState,
     SlotValueResponse,
-    VerificationResult
+    VerificationResponse
 )
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
@@ -32,6 +32,7 @@ class agentSystem:
         )
         self.slot_extractor = self.create_agent(prompt_name="extract_slots")
         self.verifier = self.create_agent(prompt_name="verify_results")
+        self.issue_solver = self.create_agent(prompt_name="solve_issue")
 
     def create_agent(self, prompt_name) -> RunnableSerializable:
         """
@@ -43,10 +44,10 @@ class agentSystem:
             RunnableSerializable:  Chain of prompt with LLM and parser.
         """
         prompt = utils_functions.return_prompt(prompt_name)
-        if prompt_name == "extract_slots":
+        if prompt_name == "extract_slots" or prompt_name == "solve_issue":
             parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
         elif prompt_name == "verify_results":
-            parser = PydanticOutputParser(pydantic_object=VerificationResult)
+            parser = PydanticOutputParser(pydantic_object=VerificationResponse)
 
         return prompt | self.model | parser
 
@@ -60,6 +61,7 @@ class agentSystem:
         Returns:
             Command: Command to Langgraph to update
         """
+        print("domain_extractor_agent")
         user_prompt = utils_functions.build_last_utterance_prompt(state)
         result = self.domain_extractor.invoke({
             "messages": [{"role": "user", "content": user_prompt}]
@@ -67,6 +69,7 @@ class agentSystem:
         structured: DomainResponse = result["structured_response"]
         domains = structured.domains
         state.push_node("domain_extractor_agent")
+        print(f"state.last_node: {state.last_node}")
 
         return Command(
             update={
@@ -88,6 +91,7 @@ class agentSystem:
             Command: Command to update `extraction_result` and `last_node`
             fields of state.
         """
+        print("slot_extractor_agent")
         user_prompt = utils_functions.build_slot_extraction_prompt(state)
         result = self.slot_extractor.invoke(user_prompt)
 
@@ -95,16 +99,13 @@ class agentSystem:
             key: {"uuid": str(uuid.uuid4())[:8], "value": dict(value)}
             for key, value in dict(result)["root"].items()
         }
+        print(result)
 
         state.push_node("slot_extractor_agent")
-        updated_conv_list = state.conversation + [{
-            "user": state.latest_user_utterance
-        }]
 
         return Command(
             update={
                 "extraction_result": result,
-                "conversation": updated_conv_list,
                 "last_node": state.last_node
             }
         )
@@ -117,9 +118,10 @@ class agentSystem:
             state (MetaExpertState): Current state of the system.
 
         Returns:
-            Command: Command to update `extraction_result` and `last_node`
+            Command: Command to update `last_verification_results` and `last_node`
             fields of state.
         """
+        print("verifier_agent")
         user_prompt = utils_functions.build_verification_prompt(state)
         result = self.verifier.invoke(user_prompt)
 
@@ -127,7 +129,7 @@ class agentSystem:
             key: value
             for key, value in dict(result)["root"].items()
         }
-        state.push_node("slot_extractor_agent")
+        state.push_node("verifier_agent")
         return Command(
             update={
                 "last_verification_results": result,
@@ -135,24 +137,79 @@ class agentSystem:
             }
         )
 
-    def check_if_verification_finished(self, state: MetaExpertState) -> (
-        Command[Literal["verifier_agent", END]]
-    ):
+    def issue_solver_agent(self, state: MetaExpertState) -> Command:
+        """
+        Solves issues found in verifcation process
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            Command: Command to update `extraction_result` and `last_node`
+            fields of state.
+        """
+        print("issue_solver_agent")
+        user_prompt = utils_functions.build_verification_prompt(state)
+        result = self.verifier.invoke(user_prompt)
+        result = {
+            key: value
+            for key, value in dict(result)["root"].items()
+        }
+        state.push_node("issue_solver_agent")
+        return Command(
+            update={
+                "issue_solver": result,
+                "last_node": state.last_node
+            }
+        )
+
+    def check_if_wrong_result(self, state: MetaExpertState) -> bool:
+        """
+        Checks if any element was verified as false
+        in the verification process.
+
+        Args:
+            state (MetaExpertState): Current state of the system.
+
+        Returns:
+            bool: Trure if any result was verified as false;
+            false otherwise
+        """
+        for _, verification in state.last_verification_results.items():
+            if not dict(verification)["boolean"]:
+                return True
+        return False
+
+    def check_if_verification_finished(
+        self, state: MetaExpertState
+    ) -> Command[Literal["verifier_agent", "issue_solver_agent", END]]:
         """
         123
         """
-        if state.last_node[-1] == "slot_extractor_agent":
+        last_agent = state.last_node[-1]
+
+        if last_agent in ("slot_extractor_agent", "issue_solver_agent"):
+            print("Command -> verifier_agent")
+            return Command(update={}, goto="verifier_agent")
+
+        if last_agent == "verifier_agent":
+            if self.check_if_wrong_result(state):
+                print("Command -> issue_solver_agent")
+                return Command(update={}, goto="issue_solver_agent")
+
+            # verification succeeded
             print("Command -> END")
-            return Command(update={}, goto=END)
-            #print("Command -> verifier_agent")
-            #return Command(update={}, goto="verifier_agent")
-        else:
-            print("Command -> END")
-            return Command(update={}, goto=END)
+            updated_conv = state.conversation + [
+                {"user": state.latest_user_utterance}
+            ]
+            return Command(
+                update={"conversation": updated_conv},
+                goto=END
+            )
 
     def router_function(self, state: MetaExpertState) -> Command[Literal[
         "domain_extractor_agent", "slot_extractor_agent", "verifier_agent",
-        END
+        "issue_solver_agent", END
     ]]:
         """
         Takes state of graph and decides next stept.
@@ -204,14 +261,19 @@ class graphState:
                 "verifier_agent"
             )
             .add_node(
+                self.system.issue_solver_agent,
+                "issue_solver_agent"
+            )
+            .add_node(
                 self.system.router_function,
                 "router_function"
             )
             .add_edge(START, "router_function")
             .add_edge("domain_extractor_agent", "router_function")
+            
             .add_edge("slot_extractor_agent", "router_function")
-            #.add_edge("slot_extractor_agent", END)
             .add_edge("verifier_agent", "router_function")
+            .add_edge("issue_solver_agent", "router_function")
             .add_edge("router_function", END)
             .compile()
         )

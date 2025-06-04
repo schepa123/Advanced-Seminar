@@ -111,6 +111,29 @@ def replace_single_curly_brackets(string_value: str) -> str:
     return text
 
 
+def return_slots_present(state: MetaExpertState) -> dict[str, str]:
+    """
+    Returns the slot-value definitions for present domains.
+
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        dict[str, str]: The slot value definitions.
+    """
+    slot_dict = read_yml(path=os.path.join(
+        return_root_dir(),
+        "src",
+        "agents_src",
+        "domain_slots.yml"
+    ))
+    return {
+        key: value for key, value in slot_dict.items()
+        if key in state.domains
+        # if key in state["domains"]
+    }
+
+
 def build_last_utterance_prompt(state: MetaExpertState) -> str:
     """
     Builds the prompt combining the prior conversation and the
@@ -139,21 +162,10 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
     Returns:
         str: The created prompt.
     """
-    slot_dict = read_yml(path=os.path.join(
-        return_root_dir(),
-        "src",
-        "agents_src",
-        "domain_slots.yml"
-    ))
-    slots_present = {
-        key: value for key, value in slot_dict.items()
-        if key in state.domains
-    }
-
     user_prompt_dict = {
         "domain": state.domains,
         "slot_value_pair": replace_single_curly_brackets(
-            json.dumps(slots_present)
+            json.dumps(return_slots_present(state))
         ),
         "prior_conversation": replace_single_curly_brackets(
             json.dumps(state.conversation)
@@ -165,37 +177,82 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
 
 
 def build_verification_prompt(state: MetaExpertState) -> dict[str, str]:
-    """123"""
-    slot_dict = read_yml(path=os.path.join(
-        return_root_dir(),
-        "src",
-        "agents_src",
-        "domain_slots.yml"
-    ))
-    slots_present = {
-        key: value for key, value in slot_dict.items()
-        #if key in state.domains
-        if key in state["domains"]
-    }
+    """
+    Build the verification prompt by combining the slots definition
+    present in the latest user utterance with the extraction results.
 
-    user_prompt_dict = {
-        #"domain": state.domains,
-        "domain": state["domains"],
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        str: The created prompt.
+    """
+    return {
+        "domain": state.domains,
+        #"domain": state["domains"],
         "slot_value_pair_description": replace_single_curly_brackets(
-            json.dumps(slots_present)
+            json.dumps(return_slots_present(state))
         ),
         "prior_conversation": replace_single_curly_brackets(
-            #json.dumps(state.conversation)
-            json.dumps(state["conversation"])
+            json.dumps(state.conversation)
+            #json.dumps(state["conversation"])
         ),
-        "latest_user_utterance": state["latest_user_utterance"],
-        "extraction_results": state["extraction_result"]
+        #"latest_user_utterance": state["latest_user_utterance"],
+        "latest_user_utterance": state.latest_user_utterance,
+        #"extraction_results": state["extraction_result"]
+        "extraction_results": state.extraction_result
     }
 
-    return user_prompt_dict
 
-def 
+def create_issue_solving_dict(state: MetaExpertState) -> dict[str, str]:
+    """
+    Creates the dict for the issue solving agent by select only wrong entries.
 
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        dict[str, str]: the dict for the issue solving agent.
+    """
+    wrong_entries = {}
+    for key, value in state.last_verification_results.items():
+    # for key, value in dict(state["last_verification_results"].root).items():
+        temp_dict = dict(value)
+        if not temp_dict["boolean"]:
+            temp_dict.pop("boolean", None)
+            wrong_entries[key] = temp_dict
+
+    return wrong_entries
+
+
+def build_issue_solving_prompt(state: MetaExpertState) -> dict[str, str]:
+    """
+    Build the issue solving prompt by combining the slots definition
+    present in the latest user utterance with the verification results.
+
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        str: The created prompt.
+    """
+    test = {
+        "domain": state.domains,
+        # "domain": state["domains"],
+        "slot_value_pair_description": replace_single_curly_brackets(
+            json.dumps(return_slots_present(state))
+        ),
+        "prior_conversation": replace_single_curly_brackets(
+            json.dumps(state.conversation)
+            # json.dumps(state["conversation"])
+        ),
+        # "latest_user_utterance": state["latest_user_utterance"],
+        "latest_user_utterance": state.latest_user_utterance,
+        "wrong_results": replace_single_curly_brackets(
+            json.dumps(create_issue_solving_dict(state))
+        )
+    }
+    return test
 
 
 def fix_common_spelling_mistakes(domains: list[str]) -> list[str]:

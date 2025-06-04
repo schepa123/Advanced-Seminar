@@ -17,7 +17,7 @@ You will be presented with:
 {latest_user_utterance}
 </latest_user_utterance>
 <wrong_results>
-{extraction_results}
+{wrong_results}
 </wrong_results>
 
 
@@ -33,7 +33,7 @@ For each entry (uuid) in the <wrong_results> JSON, you must provide a corrected 
 ## Template
 For each uuid in <wrong_results>:
   - If a correction is not possible (because of ambiguity, unresolved reference, or missing info etc.), set the value for this uuid to an empty dict, e.g. 
-    { ... "e8784248": {} ... }
+    {{ ... "e8784248": {{}} ... }}
   - If a correction is possible, the value for this uuid must be a dict with the following two keys:
     1. "explanation": A concise (≤2 sentences) reason why this value is correctly identified
     2. `"value"`: The exact text (or normalized form) of what the user provided for that slot.  
