@@ -1,6 +1,3 @@
-from langgraph.graph import Command
-import agent_tools
-import agent_data_definitions  
 from src.agents_src import graph_builder
 from utils import utils_functions
 from langchain.chat_models import init_chat_model
@@ -17,7 +14,7 @@ class DialogueStateTracker:
         self.file = json.loads(
             utils_functions.read_file(path=file_path)
         )
-        self.conversation = self.create_conversations()
+        self.conversations = self.create_conversations()
         self.system = graph_builder.agentSystem(model_name=model_name)
 
     def create_conversations(self) -> dict[str, dict[str, str]]:
@@ -66,20 +63,17 @@ class DialogueStateTracker:
         """
         conversation = []
         for index, conversation_turn in enumerate(
-            self.conversation[file]["conversation"]
+            self.conversations[file]["conversation"]
         ):
             if index % 2 == 0:  # User
-                #graph = graph_builder.graphState(
-                #    conversation=conversation,
-                #    latest_user_utterance=conversation_turn,
-                #    system=self.system
-                #)
-                #graph.invoke()
-                #self.conversation[file]["slot_values"][index] = (
-                #    graph.state["extraction_result"]
-                #)
-                self.conversation[file]["slot_values"][index] = (
-                    "Hallo"
+                graph = graph_builder.graphState(
+                    conversation=conversation,
+                    latest_user_utterance=conversation_turn["user"],
+                    system=self.system
+                )
+                graph.invoke()
+                self.conversations[file]["slot_values"][index] = (
+                    graph.state["extraction_result"]
                 )
                 conversation.append(conversation_turn)
             else:  # System

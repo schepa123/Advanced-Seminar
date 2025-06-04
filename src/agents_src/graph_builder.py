@@ -24,12 +24,13 @@ from textwrap import dedent
 class agentSystem:
     def __init__(self, model_name="openai:o4-mini-2025-04-16"):
         self.model = init_chat_model(model_name)
-        self.domain_extractor = create_react_agent(
-            model=self.model,
-            tools=[return_slots],
-            prompt=utils_functions.return_prompt("detect_domain"),
-            response_format=DomainResponse
-        )
+        # self.domain_extractor = create_react_agent(
+        #    model=self.model,
+        #    tools=[return_slots],
+        #    prompt=utils_functions.return_prompt("detect_domain"),
+        #    response_format=DomainResponse
+        # )
+        self.domain_extractor = self.create_agent(prompt_name="detect_domain")
         self.slot_extractor = self.create_agent(prompt_name="extract_slots")
         self.verifier = self.create_agent(prompt_name="verify_results")
         self.issue_solver = self.create_agent(prompt_name="solve_issue")
@@ -44,7 +45,9 @@ class agentSystem:
             RunnableSerializable:  Chain of prompt with LLM and parser.
         """
         prompt = utils_functions.return_prompt(prompt_name)
-        if prompt_name == "extract_slots" or prompt_name == "solve_issue":
+        if prompt_name == "detect_domain":
+            parser = PydanticOutputParser(pydantic_object=DomainResponse)
+        elif prompt_name == "extract_slots" or prompt_name == "solve_issue":
             parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
         elif prompt_name == "verify_results":
             parser = PydanticOutputParser(pydantic_object=VerificationResponse)
@@ -66,15 +69,20 @@ class agentSystem:
         result = self.domain_extractor.invoke({
             "messages": [{"role": "user", "content": user_prompt}]
         })
-        structured: DomainResponse = result["structured_response"]
-        domains = structured.domains
+        print(result)
+        # structured: DomainResponse = result["structured_response"]
+        # domains = structured.domains
+        # print(domains)
+        print(json.dumps(result.root))
         state.push_node("domain_extractor_agent")
         print(f"state.last_node: {state.last_node}")
 
         return Command(
             update={
                 "domains": (
-                    utils_functions.fix_common_spelling_mistakes(domains)
+                    utils_functions.fix_common_spelling_mistakes(
+                        json.dumps(result.root)
+                    )
                 ),
                 "last_node": state.last_node
             }
@@ -224,6 +232,12 @@ class agentSystem:
         if not bool(state.domains):
             print("Command -> domain_extractor_agent")
             return Command(update={}, goto="domain_extractor_agent")
+        if "No domain found" in state.domains:
+            print("Command -> END")
+            return Command(
+                update={},
+                goto=END
+            )
         else:
             if not bool(state.extraction_result):
                 print("Command -> slot_extractor_agent")

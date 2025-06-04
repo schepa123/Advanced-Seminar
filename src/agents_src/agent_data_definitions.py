@@ -42,14 +42,14 @@ class MetaExpertState(BaseModel):
         print(f"self.last_node: {self.last_node}")
 
 
-class DomainResponse(BaseModel):
+class DomainResponse(RootModel[list[str]]):
     """
     Defines response format of domain extractor
 
     Attributes:
         domains: A list of extracted domains
     """
-    domains: list[str]
+    pass
 
 
 class SlotDetail(BaseModel):
