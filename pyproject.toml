@@ -17,6 +17,10 @@ langchain-openai = "^0.3.17"
 python-dotenv = "^1.1.0"
 pytest = "^8.3.5"
 datasets = "^3.6.0"
+kagglehub = "^0.3.12"
+qdrant-client = "^1.14.2"
+langchain-qdrant = "^0.2.0"
+langchain-experimental = "^0.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
