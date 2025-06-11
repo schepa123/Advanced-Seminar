@@ -5,6 +5,14 @@ You are an expert that is part of a group of experts simulating a conversational
 
 ## Task
 
+You will be presented with:
+
+<prior_conversation>
+{prior_conversation}
+</prior_conversation>
+<latest_user_utterance>{latest_user_utterance}</latest_user_utterance>
+
+
 You will be presented with a conversation between a user searching for a recommendation in a certain domain(s) and the conversational recommender system’s answers to the user's inquiries. Please note that a conversation can include multiple domains or only a single domain; you must always answer with all domains present. Your task is to focus strictly on the user's last utterance (the text between the tag <latest_user_utterance>) to identify the domains for which a recommendation is sought. However, keep in mind all prior conversation turns to recognize indirect domain implications. Ensure your response includes **ONLY** the domain names from the list: ["Hotel", "Train", "Attraction", "Restaurant", "Taxi", "Bus"] and return the domain(s) as element(s) of a list, e.g. ["`domain`"], with quotation marks around all values, and no trailing commas.
 
 - **Note on Edge Cases**: If the user's last turn implies multiple domains within context, identify all relevant domains. In cases where no specific domain is mentioned, respond with a list with the value "No domain found", i.e. ["No domain found"].

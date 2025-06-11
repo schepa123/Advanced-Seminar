@@ -66,6 +66,7 @@ class DialogueStateTracker:
             self.conversations[file]["conversation"]
         ):
             if index % 2 == 0:  # User
+                print(conversation_turn["user"])
                 graph = graph_builder.graphState(
                     conversation=conversation,
                     latest_user_utterance=conversation_turn["user"],

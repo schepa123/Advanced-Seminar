@@ -22,7 +22,7 @@ You will be presented with:
   1. `"explanation"`: A concise (≤2 sentences) reason why you extracted that slot/value from the latest utterance.  
   2. `"value"`: The exact text (or normalized form) of what the user provided for that slot.  
 - Omit any slots that have no value.  
-- If no slots appear in the latest utterance, return `{{}}`.  
+- If no slots appear in the latest utterance, return `{{"None": {{"explanation": "None", "value": "None"}}}}`.  
 - Ensure the output is valid JSON, with quotation marks around all keys and values, and no trailing commas.
 
 ## Examples

@@ -134,7 +134,7 @@ def return_slots_present(state: MetaExpertState) -> dict[str, str]:
     }
 
 
-def build_last_utterance_prompt(state: MetaExpertState) -> str:
+def build_last_utterance_prompt(state: MetaExpertState) -> dict[str, str]:
     """
     Builds the prompt combining the prior conversation and the
     latest_user_utterance.
@@ -145,10 +145,10 @@ def build_last_utterance_prompt(state: MetaExpertState) -> str:
     Returns:
         str: The created prompt.
     """
-    return dedent(f"""
-    <prior_conversation>{state.conversation}</prior_conversation>
-    <latest_user_utterance>{state.latest_user_utterance}</latest_user_utterance>
-    """)
+    return {
+        "prior_conversation": state.conversation,
+        "latest_user_utterance": state.latest_user_utterance
+    }
 
 
 def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:

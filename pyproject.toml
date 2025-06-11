@@ -16,6 +16,7 @@ langgraph = "^0.4.5"
 langchain-openai = "^0.3.17"
 python-dotenv = "^1.1.0"
 pytest = "^8.3.5"
+datasets = "^3.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

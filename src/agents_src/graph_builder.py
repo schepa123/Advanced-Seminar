@@ -56,7 +56,7 @@ class agentSystem:
 
     def domain_extractor_agent(self, state: MetaExpertState) -> Command:
         """
-        Domain extractor agent execution handler
+        Domain extractor agent execution handler.
 
         Args:
             state (MetaExpertState): Current state of the system.
@@ -64,24 +64,15 @@ class agentSystem:
         Returns:
             Command: Command to Langgraph to update
         """
-        print("domain_extractor_agent")
         user_prompt = utils_functions.build_last_utterance_prompt(state)
-        result = self.domain_extractor.invoke({
-            "messages": [{"role": "user", "content": user_prompt}]
-        })
-        print(result)
-        # structured: DomainResponse = result["structured_response"]
-        # domains = structured.domains
-        # print(domains)
-        print(json.dumps(result.root))
+        result = self.domain_extractor.invoke(user_prompt)
         state.push_node("domain_extractor_agent")
-        print(f"state.last_node: {state.last_node}")
 
         return Command(
             update={
                 "domains": (
                     utils_functions.fix_common_spelling_mistakes(
-                        json.dumps(result.root)
+                        result.root
                     )
                 ),
                 "last_node": state.last_node
@@ -232,7 +223,8 @@ class agentSystem:
         if not bool(state.domains):
             print("Command -> domain_extractor_agent")
             return Command(update={}, goto="domain_extractor_agent")
-        if "No domain found" in state.domains:
+        print(state.domains)
+        if "no domain found" in state.domains:
             print("Command -> END")
             return Command(
                 update={},
@@ -242,6 +234,12 @@ class agentSystem:
             if not bool(state.extraction_result):
                 print("Command -> slot_extractor_agent")
                 return Command(update={}, goto="slot_extractor_agent")
+            elif "None" in state.extraction_result:
+                print("Command -> END")
+                return Command(
+                    update={},
+                    goto=END
+                )
             else:
                 return self.check_if_verification_finished(state)
 
