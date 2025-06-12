@@ -11,7 +11,6 @@ from langchain_core.prompts.prompt import PromptTemplate
 
 sys.path.append("..")
 from agents_src.agent_data_definitions import MetaExpertState
-from RAG.qdrant import QdrantConnection # ÄNDERE DAS AUF WAS ALLGEMEINERS
 from langchain_core.documents import Document
 
 

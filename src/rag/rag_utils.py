@@ -5,23 +5,63 @@ from langchain_qdrant import QdrantVectorStore
 from langchain_openai import OpenAIEmbeddings
 from uuid import uuid4
 from agents_src.agent_data_definitions import MetaExpertState
-from RAG.qdrant import QdrantConnection # ÄNDERE DAS AUF WAS ALLGEMEINERS
+from .qdrant import QdrantConnection # ÄNDERE DAS AUF WAS ALLGEMEINERS
 from langchain_core.documents import Document
 import pandas as pd
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
+
 
 
 class IMDbReviewVectorStoreLoader():
     def __init__(
         self,
         path: str,
-        vector_store: QdrantConnection
+        vector_store: QdrantConnection,
+        chunking_strategy: str,
+        chunk_size: int = 1000,
+        chunk_overlap: int = 200,
+        add_start_index: bool = True
     ) -> None:
         self.vector_store = vector_store
         self.path = path
         self.file_data = self.load_files()
         self.movies_with_uuid = self.define_movies()
-
+        self.text_splitter = self.select_text_splitter(
+            chunking_strategy=chunking_strategy,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            add_start_index=add_start_index
+        )
         self.add_uuid_to_df()
+
+    def select_text_splitter(
+        self,
+        chunking_strategy: str,
+        chunk_size: int,
+        chunk_overlap: int,
+        add_start_index: bool
+    ) -> RecursiveCharacterTextSplitter | SemanticChunker:
+        """
+        Selects the chunking strategy.
+
+        Args:
+            chunking_strategy(str): Name of strategy
+
+        Returns:
+            RecursiveCharacterTextSplitter | SemanticChunker: LangChain
+        """
+        match chunking_strategy:
+            case "RecursiveCharacterTextSplitter":
+                text_splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=chunk_size,
+                    chunk_overlap=chunk_overlap,
+                    add_start_index=add_start_index,
+                )
+            case "SemanticChunker":
+                text_splitter = SemanticChunker(OpenAIEmbeddings())
+
+        return text_splitter
 
     def load_files(self) -> dict[str, pd.DataFrame]:
         """
@@ -74,9 +114,9 @@ class IMDbReviewVectorStoreLoader():
             None.
         """
         for _, df in self.file_data.items():
-            df['uuid'] = df['movie'].map(self.movies_with_uuid)
+            df['movie_uuid'] = df['movie'].map(self.movies_with_uuid)
 
-    def load_in_vector_store(self) -> None:
+    def load_to_vector_store(self) -> None:
         """
         Creates Documents out of dataframe and loads them into
         the vector store.
@@ -89,20 +129,19 @@ class IMDbReviewVectorStoreLoader():
         """
         for _, df in self.file_data.items():
             # REMOVE; THIS IS JUST FOR TESTING
-            df = df.sample(223)
+            # df = df.sample(23)
             # ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
             documents = []
-            uuids = []
             for row in df.itertuples(index=False):
                 documents.append(
                     Document(
                         page_content=row.review_detail,
-                        metadata={"movie": row.movie}
+                        metadata={
+                            "movie": row.movie,
+                            "movie_uuid": row.movie_uuid
+                        }
                     )
                 )
-                uuids.append(row.uuid)
 
-            self.vector_store.vector_store.add_documents(
-                documents,
-                ids=uuids
-            )
+            chunks = self.text_splitter.split_documents(documents)
+            self.vector_store.vector_store.add_documents(chunks)

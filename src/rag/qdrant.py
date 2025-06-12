@@ -35,9 +35,15 @@ class QdrantConnection():
         else:
             client = QdrantClient(":memory:")
 
-        client.create_collection(
-            collection_name="collection",
-            vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
-        )
+        try:
+            client.create_collection(
+                collection_name="collection",
+                vectors_config=VectorParams(
+                    size=3072,
+                    distance=Distance.COSINE
+                ),
+            )
+        except Exception:  # Collection already exists
+            pass
 
         return client
