@@ -1,0 +1,272 @@
+genre-preferred:
+  description: Captures genres the user explicitly states they enjoy or are looking for in a movie. These can be broad categories like action, comedy, or more specific types like “feel-good family stories” or “Disney.”
+  examples:
+    - example_1:
+      - text: I'm more of an <context_extracted_because>action movie or a good romance and <context_extracted_because>mystery movie</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - text: I like <context_extracted_because>comedies, horror, thrillers, drama, or Disney</context_extracted_because>.
+      - role: Seeker
+    - example_3:
+      - text: Do you recommend any <context_extracted_because>adventure type movies</context_extracted_because> for me?
+      - role: Seeker
+    - example_4:
+      - text: My favorites are <context_extracted_because>superhero movies and scary films</context_extracted_because>. Do you have any specific recommendation within these two genres?
+      - role: Seeker
+genre-unpreferred:
+  description: Represents genres the user actively dislikes, avoids, or expresses disinterest in. These can be broad categories like action, comedy, or more specific types like “feel-good family stories” or “Disney.”
+  examples:
+    - example_1:
+      - text: <context_extracted_because>I don't like scary movies at all</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - text: <context_extracted_because>I'm not interested in animated movies.</context_extracted_because>
+      - role: Seeker
+movie-preferred:
+  description: Denotes specific movies that the user expresses a positive attitude toward, including mentions of liking, enjoying, or favoring them. These expressions are direct and unambiguous in their positive evaluation.
+  examples:
+    - example_1:
+      - turn_1:
+        - text: Nice, have you seen Grown Ups, the original or number two?
+        - role: Recommender
+      - turn_2:
+        - text: Yes I have seen and <context_extracted_because>love both</context_extracted_because>
+        - role: Seeker
+    - example_2:
+      - text: My <context_extracted_because>favorite movie of all time is Jack Reacher</context_extracted_because>.
+      - role: Seeker
+    - example_3:
+      - text: I enjoy Stephen King based movies like <context_extracted_because>It, It Chapter 2, or even Stranger Things</context_extracted_because>.
+      - role: Seeker
+    - example_4:
+      - turn_1:
+        - text: What is your favorite comedy
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>to all the boys i've loved before</context_extracted_because>.
+        - role: Seeker
+movie-unpreferred:
+  description: Denotes specific movies that the user expresses a negative attitude toward, including mentions of disliking, being disappointed by, or finding the movie unsuitable. These statements convey a clear evaluative rejection.
+  examples:
+    - example_1:
+      - turn_1:
+        - text: Are you interested in the new top gun movie?
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>No not really</context_extracted_because>. I thought the first one was ok but not really up my alley.
+        - role: Seeker
+    - example_2:
+      - text: I <context_extracted_because>didn't appreciate the Pet Semetary</context_extracted_because> remake quite as much.
+      - role: Seeker
+    - example_3:
+      - turn_1:
+        - text: Three days to Kill.. thats full of action, as he and his estranged daughter reconcile,, its quite thought provoking,, ;-)
+        - role: Recommender
+      - turn_2:
+        - text: I have actually seen that one and <context_extracted_because>I thought it was a little boring</context_extracted_because> because it was more about killing time with his daughter.
+        - role: Seeker
+    - example_4:
+      - turn_1:
+        - text: Marley & Me had me crying for a good half hour so I completely understand that!
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>I avoided that movie</context_extracted_because> because someone told me he passed away.
+        - role: Seeker
+movie-wanting-to-watch:
+  description: Refers to movies the user indicates interest in watching but has not yet seen. The user's statements express intention, anticipation, or desire to engage with the movie in the future.
+  examples:
+    - example_1:
+      - turn_1:
+        - text: Have you seen Ready or Not? It's a thriller that came out last August
+        - role: Recommender
+      - turn_2:
+        - text: I haven't seen it yet but <context_extracted_because>im actually very excited to see how it goes</context_extracted_because>. is it any good?
+        - role: Seeker
+    - example_2:
+      - turn_1:
+        - text: Did you see Crown for Christmas?
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>No, but I wanted to</context_extracted_because>.
+        - role: Seeker
+    - example_3:
+      - turn_1:
+        - text: have you happened to have seen the newest Avengers? Avengers Endgame?
+        - role: Recommender
+      - turn_2:
+        - text: No I haven't but I've heard great reviews about it. I forgot about it but now that you've reminded me, <context_extracted_because>I plan on watching that soon when I have more free time</context_extracted_because>.
+        - role: Seeker
+movie-description-general-preferred:
+  description: Refers to general descriptive traits, themes, tones, or characteristics that the user expresses a preference for in movies. These traits are not linked to a specific title but are abstract or category-level attributes.
+  examples:
+    - example_1:
+      - text: Lately, I've been enjoying Christmas movies, especially <context_extracted_because>older classics</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - text: Do you know anything <context_extracted_because>more recent</context_extracted_because>?
+      - role: Seeker
+    - example_3:
+      - turn_1:
+        - text: Do you like movies that are inspired by true stories?
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>Yes</context_extracted_because>.
+        - role: Seeker
+    - example_4:
+      - text: I'm generally interested in <context_extracted_because>medieval type of adventure movies</context_extracted_because>.
+      - role: Seeker
+    - example_5:
+      - text: I typically like action movie! <context_extracted_because>bUt ones that make you think, not just ones with a lot of explosion</context_extracted_because>.
+      - role: Seeker
+    - example_6:
+      - text: <context_extracted_because>I preffer some risque humor or some off the wall comical set off circumstances</context_extracted_because>.
+      - role: Seeker
+    - example_7:
+      - text: I like watching movies or shows during <context_extracted_because>certain seasons</context_extracted_because>.
+      - role: Seeker
+    - example_8:
+      - text: <context_extracted_because>i like the suspense parts that make you focused</context_extracted_because>.
+      - role: Seeker
+    - example_9:
+      - text: <context_extracted_because>Can kids watch the movie</context_extracted_because>?
+      - role: Seeker
+movie-description-movie_specific-preferred:
+  description: Refers to descriptive feedback or evaluative statements in which the user identifies specific qualities they liked in a particular movie. The description is tied directly to a named title.
+  examples:
+    - example_1:
+      - turn_1:
+        - text: It takes place in florida, big hurricane hits houses near swamp and they become infested with man eating aligators.
+        - role: Recommender
+      - turn_2:
+         - text: <context_extracted_because>sounds interesting</context_extracted_because>
+         - role: Seeker
+    - example_2:
+      - text: Deadpool because it did a <context_extracted_because>great job of mashing comedy and action together</context_extracted_because>.
+      - role: Seeker
+    - example_3:
+      - text: I think IT was <context_extracted_because>far more scary and better overall</context_extracted_because>.
+      - role: Seeker
+    - example_4:
+      - text: I really like Wreck it Ralph because it <context_extracted_because>talks about every day life</context_extracted_because>.
+      - role: Seeker
+    - example_5:
+      - text: "... otherwise the movie seems to have <context_extracted_because>really cool scenary</context_extracted_because>"
+      - role: Seeker
+movie-description-unpreferred:
+  description: Refers to general descriptive traits, themes, tones, or characteristics that the user expresses a dislike for in movies. These descriptions are not associated with a particular title but reflect abstract preferences.
+  examples:
+    - example_1:
+      - text: "... <context_extracted_because>not necessarily gory</context_extracted_because>, but supernatural is good."
+      - role: Seeker
+    - example_2:
+      - text: <context_extracted_because>I don't like things that are repetitive or it has the same plot to it</context_extracted_because>.
+      - role: Seeker
+movie_trailer-watched:
+  description: Indicates that the user has seen or is familiar with a specific movie or trailer. These statements refer to prior exposure without necessarily evaluating the content.
+  examples:
+    - example_1:
+      - text: I seen that one too as <context_extracted_because>I seen Joker about a month ago</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - text: Hello, I like a variety of movies, <context_extracted_because>recently have been watching The Mandalorian and a lot of martial arts movies from the 70s and 80s</context_extracted_because>.
+      - role: Seeker
+    - example_3:
+      - turn_1:
+        - text: Have you seen Frozen 2 yet?
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>Yes</context_extracted_because> it is a good movie but, my daughter is not into it.
+        - role: Seeker
+    - example_4:
+      - turn_1:
+        - text: What's the last movie that you watched?
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>Parasite hahaha</context_extracted_because>.
+        - role: Seeker
+actor-preferred:
+  description: Denotes actors whom the user expresses a favorable opinion about. This includes direct or indirect statements indicating admiration, liking, or interest.
+  examples:
+    - example_1:
+      - text: Maybe with <context_extracted_because>Chris Evans in it it'll be easier to convince my fiance to see it</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - turn_1:
+        - text: Plus Harrison is such a great actor.
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>he really is</context_extracted_because>! Such an epic voice
+        - role: Seeker
+    - example_3:
+      - text: <context_extracted_because>Do you have any other movie from Lana Condor</context_extracted_because>?
+      - role: Seeker
+    - example_4:
+      - turn_1:
+        - text: Does Denzel Washington act in it too?
+        - role: Recommender
+      - turn_2:
+        - text: Yeah he is in the movie.
+        - role: Recommender
+      - turn_3:
+        - text: <context_extracted_because>Oh awesome</context_extracted_because>.
+        - role: Seeker
+    - example_5:
+      - text: <context_extracted_because>Jackie Chan films are up my alley</context_extracted_because>.
+      - role: Seeker
+franchise-preferred:
+  description: Denotes movie franchises that the user expresses a favorable opinion about. This includes mentions of attachment, interest, or habitual engagement with a series of related films.
+  examples:
+    - example_1:
+      - text: But <context_extracted_because>he loves the bond movies</context_extracted_because> so that should be a good incentive for him to go see it.
+      - role: Seeker
+    - example_2:
+      - turn_1:
+        - text: The new Star Wars comes out in less than a month, if you are into the franchise.
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>He is</context_extracted_because>, I think he told me we're getting it when it comes out to add to our movie collection.
+emotional-response:
+  description: Refers to the user's stated or implied emotional reaction to a movie or anticipated emotional response. This includes affective states such as fear, sadness, joy, or emotional avoidance.
+  examples:
+    - example_1:
+      - text: Oh I'd definitely would <context_extracted_because>cry at the dogs death</context_extracted_because>.
+      - role: Seeker
+    - example_3:
+      - text: I did, it was very scary, <context_extracted_because>i had to hide during the parts with the clown</context_extracted_because> lol.
+      - role: Seeker
+context-viewing:
+  description: Captures the social and situational context in which the user wants to watch a movie (e.g., with family, with children, during holidays). This context influences tone, genre, and content suitability.
+  examples:
+    - example_1:
+      - text: Hi, I'm looking for a good movie recommendation to watch <context_extracted_because>with my sister and brother in law over the holidays</context_extracted_because>.
+      - role: Seeker
+    - example_2:
+      - text: you have any recommendations for any other movies <context_extracted_because>my daughter and I could watch</context_extracted_because>?
+      - role: Seeker
+inquired-about:
+  description: Represents cases where the user asks for additional information about a movie, actor, franchise, or concept. These inquiries indicate interest and knowledge gaps, often leading into preference formation.
+  examples:
+    - example_1:
+      - turn_1:
+        - text: big fan of all the pitch black movies with vin diesel
+        - role: Recommender
+      - turn_2:
+        - text: i have never heard of those. <context_extracted_because>what are those about? how many of them are there?</context_extracted_because>
+        - role: Seeker
+    - example_2:
+      - turn_1:
+        - text: You've no doubt seen the MIB series, but those were kind of good as well.
+        - role: Recommender
+      - turn_2:
+        - text: <context_extracted_because>Can you tell me what you like about MIB?</context_extracted_because>
+        - role: Seeker
+    - example_3:
+      - turn_1:
+        - text: Oh, did you see Thor? I thought that was a great movie.
+        - role: Recommender
+      - turn_2:
+        - text: No. I haven't seen Thor. <context_extracted_because>Can you tell me more about it?</context_extracted_because>
+        - role: Seeker
+    - example_4:
+      - text: <context_extracted_because>Isnt that the movie where every night everyone gets to kill each other</context_extracted_because>?
+      - role: Seeker
