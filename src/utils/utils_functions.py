@@ -10,7 +10,7 @@ from textwrap import dedent
 from langchain_core.prompts.prompt import PromptTemplate
 
 sys.path.append("..")
-from agents_src.agent_data_definitions import MetaExpertState
+from agents_src_woz.agent_data_definitions import MetaExpertState
 from langchain_core.documents import Document
 
 

@@ -4,7 +4,7 @@ from qdrant_client import QdrantClient
 from langchain_qdrant import QdrantVectorStore
 from langchain_openai import OpenAIEmbeddings
 from uuid import uuid4
-from agents_src.agent_data_definitions import MetaExpertState
+from agents_src_woz.agent_data_definitions import MetaExpertState
 from .qdrant import QdrantConnection # ÄNDERE DAS AUF WAS ALLGEMEINERS
 from langchain_core.documents import Document
 import pandas as pd
