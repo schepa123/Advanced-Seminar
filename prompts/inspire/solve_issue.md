@@ -86,8 +86,79 @@ Return a single JSON object with the corrected results for every uuid provided i
 
 #### Output
 ```json
-{
-    "c014c9d1-cfe4-45c8-ae75-d5da5b76b8d6": {
-        "slot": "movie-preferred"
-    }
-}
+{{
+    "c014c9d1-cfe4-45c8-ae75-d5da5b76b8d6": {{
+        "slot": "movie-preferred",
+        "explanation": "I added the word before to the movie title, thereby completing it",
+        "value": "to all the boys i've loved before",
+        "context": [
+            {{"speaker": "recommender", "utterance": "What is your favorite comedy?"}},
+            {{"speaker": "seeker", "utterance": "to all the boys i've loved before"}}
+        ]
+    }}
+}}
+```
+
+### Example 2
+### Example 2
+<slot_value_pair>
+{{
+    "movie-description-movie_specific-preferred": {{
+    "description": "Refers to descriptive feedback or evaluative statements in which the user identifies specific qualities they liked in a particular movie. The description is tied directly to a named title.",
+    "examples": [
+            {{"example_1": [
+                {{"turn_1": [{{"text": "It takes place in florida, big hurricane hits houses near swamp and they become infested with man eating aligators."}},{{"role": "Recommender"}}]}},
+                {{"turn_2": [{{"text": "<context_extracted_because>sounds interesting</context_extracted_because>"}},{{"role": "Seeker"}}]}}
+            ]}},
+            {{"example_2": [
+                {{"text": "Deadpool because it did a <context_extracted_because>great job of mashing comedy and action together</context_extracted_because>."}},{{"role": "Seeker"}}
+            ]}}
+    ]
+    }},
+    "movie_trailer-watched": {{
+    "description": "Indicates that the user has seen or is familiar with a specific movie or trailer. These statements refer to prior exposure without necessarily evaluating the content.",
+    "examples": [
+        {{"example_1": [{{"text": "I seen that one too as <context_extracted_because>I seen Joker about a month ago</context_extracted_because>."}},{{"role": "Seeker"}}]}},
+        {{"example_2": [{{"text": "Hello, I like a variety of movies, <context_extracted_because>recently have been watching The Mandalorian and a lot of martial arts movies from the 70s and 80s</context_extracted_because>."}},{{"role": "Seeker"}}]}}
+    ]
+    }}
+}}
+</slot_value_pair>
+<prior_conversation>
+{{'speaker': 'recommender', 'utterance': 'Hi! What kind of movies do you like?'}}
+{{'speaker': 'speaker', 'utterance': 'I like all kind of movies'}}
+{{'speaker': 'recommender', 'utterance': 'What about You Were Never Really Here?'}}
+{{'speaker': 'speaker', 'utterance': 'I haven't heard about that movie, what's it about?'}}
+{{'speaker': 'recommender', 'utterance': 'It's a pretty gritty action thriller starring Joaquin Phoenix, where he plays a former mercenary who deals with his trauma by taking down a human trafficking network and rescuing the girls they had captive.
+Would you be interested in watching the trailer?'}}
+</prior_conversation>
+<latest_user_utterance>Sounds similar to Taken, but sure, I'll give it a go.</latest_user_utterance>
+<wrong_results>
+{{
+    "a9eef5c5-c0e4-460d-bc53-dba81374b7d5": {{
+        "slot": "movie-description-movie_specific-preferred",
+        "value": "It's a pretty gritty action thriller starring Joaquin Phoenix",
+        "context": [
+            {{"speaker": "recommender", "utterance": "It's a pretty gritty action thriller starring Joaquin Phoenix"}},
+            {{"speaker": "seeker", "utterance": "Sounds similar to Taken, but sure, I'll give it a go."}}
+        ],
+        "explanation": "The Extraction is too short and missing crucial information, the subordinate clause after Joaquin Phoenix should also be extracted",
+        "boolean": "False"
+    }}
+}}
+</wrong_results>
+
+#### Output
+```json
+{{
+    "a9eef5c5-c0e4-460d-bc53-dba81374b7d5": {{
+        "slot": "movie-description-movie_specific-preferred",
+        "explanation": "I added the whole sentence to complete the prefrence",
+        "value": "It's a pretty gritty action thriller starring Joaquin Phoenix, where he plays a former mercenary who deals with his trauma by taking down a human trafficking network and rescuing the girls they had captive.",
+        "context": [
+            {{"speaker": "recommender", "utterance": "It's a pretty gritty action thriller starring Joaquin Phoenix, where he plays a former mercenary who deals with his trauma by taking down a human trafficking network and rescuing the girls they had captive"}},
+            {{"speaker": "seeker", "utterance": "Sounds similar to Taken, but sure, I'll give it a go."}}
+        ]
+    }}
+}}
+```

@@ -8,8 +8,9 @@ import uuid
 
 from .agent_data_definitions import (
     MetaExpertState,
-    SlotValueResponse,
-    VerificationResponse
+    SlotValue,
+    VerificationResponse,
+    ExtractionValueResponse
 )
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
@@ -28,10 +29,9 @@ class agentSystem:
         self.model = init_chat_model(model_name)
         self.slots = utils_functions.read_yml(yml_slots_path)
 
-        #self.domain_extractor = self.create_agent(prompt_name="detect_domain")
         self.slot_extractor = self.create_agent(prompt_name="extract_slots")
         self.verifier = self.create_agent(prompt_name="verify_results")
-        #self.issue_solver = self.create_agent(prompt_name="solve_issue")
+        self.issue_solver = self.create_agent(prompt_name="solve_issue")
 
     def create_agent(self, prompt_name) -> RunnableSerializable:
         """
@@ -43,10 +43,14 @@ class agentSystem:
             RunnableSerializable:  Chain of prompt with LLM and parser.
         """
         prompt = utils_functions.return_prompt(prompt_name)
-        if prompt_name == "extract_slots" or prompt_name == "solve_issue":
-            parser = PydanticOutputParser(pydantic_object=SlotValueResponse)
+        if prompt_name == "extract_slots":
+            parser = PydanticOutputParser(
+                pydantic_object=ExtractionValueResponse
+            )
         elif prompt_name == "verify_results":
             parser = PydanticOutputParser(pydantic_object=VerificationResponse)
+        elif prompt_name == "solve_issue":
+            parser = PydanticOutputParser(pydantic_object=SlotValue)
 
         return prompt | self.model | parser
 
