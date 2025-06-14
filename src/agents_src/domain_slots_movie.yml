@@ -2,7 +2,7 @@ genre-preferred:
   description: Captures genres the user explicitly states they enjoy or are looking for in a movie. These can be broad categories like action, comedy, or more specific types like “feel-good family stories” or “Disney.”
   examples:
     - example_1:
-      - text: I'm more of an <context_extracted_because>action movie or a good romance and <context_extracted_because>mystery movie</context_extracted_because>.
+      - text: I'm more of an <context_extracted_because>action movie or a good romance and mystery movie</context_extracted_because>.
       - role: Seeker
     - example_2:
       - text: I like <context_extracted_because>comedies, horror, thrillers, drama, or Disney</context_extracted_because>.

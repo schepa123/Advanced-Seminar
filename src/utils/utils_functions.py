@@ -78,7 +78,7 @@ def read_yml(path: str) -> dict[str, str]:
             return {}
 
 
-def return_prompt(prompt_name: str) -> PromptTemplate:
+def return_prompt(prompt_name: str, dataset: str = "inspire") -> PromptTemplate:
     """
     Returns prompt based on the specifed prompt
     name.
@@ -93,6 +93,7 @@ def return_prompt(prompt_name: str) -> PromptTemplate:
         os.path.join(
             return_root_dir(),
             "prompts",
+            dataset,
             f"{prompt_name}.md"
         )
     )
@@ -155,7 +156,7 @@ def build_last_utterance_prompt(state: MetaExpertState) -> dict[str, str]:
     }
 
 
-def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
+def build_slot_extraction_prompt_old(state: MetaExpertState) -> dict[str, str]:
     """
     Build the slot extraction prompt by combining the slots definition
     present in the latest user utterance with the last utterance prompt
@@ -180,7 +181,63 @@ def build_slot_extraction_prompt(state: MetaExpertState) -> dict[str, str]:
     return user_prompt_dict
 
 
-def build_verification_prompt(state: MetaExpertState) -> dict[str, str]:
+def build_slot_extraction_prompt(
+    # state: MetaExpertState,
+    slots: dict[str, str],
+    latest_user_utterance: str,
+    conv
+) -> dict[str, str]:
+    """
+    Build the slot extraction prompt by combining the slots definition
+    present in the latest user utterance with the last utterance prompt
+
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        str: The created prompt.
+    """
+    user_prompt_dict = {
+        "slot_value_pair": replace_single_curly_brackets(
+            json.dumps(slots)
+        ),
+        "prior_conversation": replace_single_curly_brackets(
+            # json.dumps(state.conversation)
+            json.dumps(conv)
+        ),
+        #"latest_user_utterance": state.latest_user_utterance
+        "latest_user_utterance": latest_user_utterance
+    }
+
+    return user_prompt_dict
+
+
+def build_verification_prompt(
+    # state: MetaExpertState,
+    slots: dict[str, str],
+    latest_user_utterance: str,
+    conv,
+    extraction_results
+    ) -> dict[str, str]:
+    """
+    123
+    """
+    user_prompt_dict = {
+        "slot_value_pair": replace_single_curly_brackets(
+            json.dumps(slots)
+        ),
+        "prior_conversation": replace_single_curly_brackets(
+            # json.dumps(state.conversation)
+            json.dumps(conv)
+        ),
+        "latest_user_utterance": latest_user_utterance,
+        "extraction_results": extraction_results
+    }
+
+    return user_prompt_dict
+
+
+def build_verification_prompt_old(state: MetaExpertState) -> dict[str, str]:
     """
     Build the verification prompt by combining the slots definition
     present in the latest user utterance with the extraction results.
