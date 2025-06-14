@@ -8,7 +8,7 @@ import uuid
 
 from .agent_data_definitions import (
     MetaExpertState,
-    SlotValue,
+    IssueSolverValue,
     VerificationResponse,
     ExtractionValueResponse
 )
@@ -50,7 +50,7 @@ class agentSystem:
         elif prompt_name == "verify_results":
             parser = PydanticOutputParser(pydantic_object=VerificationResponse)
         elif prompt_name == "solve_issue":
-            parser = PydanticOutputParser(pydantic_object=SlotValue)
+            parser = PydanticOutputParser(pydantic_object=IssueSolverValue)
 
         return prompt | self.model | parser
 

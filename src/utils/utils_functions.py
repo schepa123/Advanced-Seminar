@@ -265,7 +265,7 @@ def build_verification_prompt_old(state: MetaExpertState) -> dict[str, str]:
     }
 
 
-def create_issue_solving_dict(state: MetaExpertState) -> dict[str, str]:
+def create_issue_solving_dict_old(state: MetaExpertState) -> dict[str, str]:
     """
     Creates the dict for the issue solving agent by select only wrong entries.
 
@@ -286,7 +286,35 @@ def create_issue_solving_dict(state: MetaExpertState) -> dict[str, str]:
     return wrong_entries
 
 
-def build_issue_solving_prompt(state: MetaExpertState) -> dict[str, str]:
+def create_issue_solving_dict(    # state: MetaExpertState,
+    verifcation_dict: dict
+) -> dict[str, str]:
+    """
+    Creates the dict for the issue solving agent by select only wrong entries.
+
+    Args:
+        state (MetaExpertState): Current state of the system.
+
+    Returns:
+        dict[str, str]: the dict for the issue solving agent.
+    """
+    wrong_entries = {}
+    for key, value in verifcation_dict.items():
+    # for key, value in dict(state["last_verification_results"].root).items():
+        temp_dict = value
+        if not temp_dict["boolean"]:
+            temp_dict.pop("boolean", None)
+            wrong_entries[key] = temp_dict
+
+    return wrong_entries
+
+
+def build_issue_solving_prompt(# state: MetaExpertState,
+    slots: dict[str, str],
+    latest_user_utterance: str,
+    conv,
+    verifcation_dict
+) -> dict[str, str]:
     """
     Build the issue solving prompt by combining the slots definition
     present in the latest user utterance with the verification results.
@@ -298,19 +326,17 @@ def build_issue_solving_prompt(state: MetaExpertState) -> dict[str, str]:
         str: The created prompt.
     """
     test = {
-        "domain": state.domains,
-        # "domain": state["domains"],
         "slot_value_pair_description": replace_single_curly_brackets(
-            json.dumps(return_slots_present(state))
+            json.dumps(slots)
         ),
         "prior_conversation": replace_single_curly_brackets(
-            json.dumps(state.conversation)
+            json.dumps(conv)
             # json.dumps(state["conversation"])
         ),
         # "latest_user_utterance": state["latest_user_utterance"],
-        "latest_user_utterance": state.latest_user_utterance,
+        "latest_user_utterance": latest_user_utterance,
         "wrong_results": replace_single_curly_brackets(
-            json.dumps(create_issue_solving_dict(state))
+            json.dumps(create_issue_solving_dict(verifcation_dict))
         )
     }
     return test

@@ -60,7 +60,7 @@ class ExtractionDetail(BaseModel):
     )
 
 
-class ExtractionValueResponse(RootModel[dict[str, SlotDetail]]):
+class ExtractionValueResponse(RootModel[dict[str, ExtractionDetail]]):
 
     """
     A mapping from *any* slot-name (string) to its SlotDetail.
@@ -102,18 +102,45 @@ class VerificationResponse(RootModel[dict[str, VerificationDetail]]):
     pass
 
 
-class SlotValueDetail(BaseModel):
+class IssueSolverDetail(BaseModel):
     """
     Defines for the slots the explanation why it was extracted and
     value extracted
     """
     explanation: str = Field(..., description="Why we extracted this value")
     value: str = Field(..., description="The extracted slot value")
+    slot: str = Field(
+        ...,
+        description="The name of slot that was extracted"
+    )
     context: list[SpeakerUtterance] = Field(
         ...,
         description="The contexted surrounding the value"
     )
 
 
+class IssueSolverValue(RootModel[dict[str, IssueSolverDetail]]):
+    pass
+
+
+class SlotValueDetail(BaseModel):
+    """
+    123
+    """
+    explanation: str = Field(..., description="Why we extracted this value")
+    value: str = Field(..., description="The extracted slot value")
+    slot: str = Field(
+        ...,
+        description="The name of slot that was extracted"
+    )
+    context: list[dict[str, str]] = Field(
+        ...,
+        description="The contexted surrounding the value"
+    )
+
+
 class SlotValue(RootModel[dict[str, SlotValueDetail]]):
+    """
+    123
+    """
     pass
