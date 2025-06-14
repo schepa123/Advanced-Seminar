@@ -8,8 +8,8 @@ import uuid
 
 from .agent_data_definitions import (
     MetaExpertState,
-    SlotValueResponse#,
-#    VerificationResponse
+    SlotValueResponse,
+    VerificationResponse
 )
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent

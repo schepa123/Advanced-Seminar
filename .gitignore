@@ -7,3 +7,4 @@ datasets/*
 Plan.md
 storage_qdrant/*
 slots_temp.md
+*.pickle

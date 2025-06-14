@@ -223,7 +223,7 @@ def build_verification_prompt(
     123
     """
     user_prompt_dict = {
-        "slot_value_pair": replace_single_curly_brackets(
+        "slot_value_pair_description": replace_single_curly_brackets(
             json.dumps(slots)
         ),
         "prior_conversation": replace_single_curly_brackets(

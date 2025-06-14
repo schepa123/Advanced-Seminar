@@ -66,3 +66,37 @@ class SlotValueResponse(RootModel[dict[str, SlotDetail]]):
     A mapping from *any* slot-name (string) to its SlotDetail.
     """
     pass
+
+
+class VerificationDetail(BaseModel):
+    """
+    Defines for the slots the explanation why the result was corrected and
+    a boolean indicating if true.
+    """
+    slot: str = Field(
+        ...,
+        description="The name of slot that was extracted"
+    )
+    value: str = Field(
+        ...,
+        description="The value from the extraction process"
+    )
+    context: list[SpeakerUtterance] = Field(
+        ...,
+        description="The contexted surrounding the value"
+    )
+    explanation: str = Field(
+        ...,
+        description="The explanation why this result was correct/incorrect"
+    )
+    boolean: bool = Field(
+        ...,
+        description="Boolean indicating if correct was correct"
+    )
+
+
+class VerificationResponse(RootModel[dict[str, VerificationDetail]]):
+    """
+    A mapping from *any* UUID (string) to the VerificationDetail.
+    """
+    pass
