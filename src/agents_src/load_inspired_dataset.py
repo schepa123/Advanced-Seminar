@@ -151,3 +151,5 @@ class inspiredDataset:
             collection_conversations[dialogue_id] = conversation
 
         return collection_conversations
+
+    def 

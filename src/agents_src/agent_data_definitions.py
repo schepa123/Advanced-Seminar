@@ -3,43 +3,7 @@ from pydantic import BaseModel, Field, RootModel
 from langgraph.graph.message import add_messages
 
 
-class MetaExpertState(BaseModel):
-    """
-    Meta Expert memory slots.
-    """
 
-    conversation: list[dict[str, str]] = Field(
-        default_factory=list,
-        description="A list of the conversation between the meta experts and other agents."
-    )
-    latest_user_utterance: str = Field(
-        default_factory=str,
-        description="The latest user utterance."
-    )
-    domains: list[str] = Field(
-        default_factory=list,
-        description="Which domains are present in this dialogue turn of the dataset."
-    )
-    last_action: list[str] = Field(
-        default_factory=list,
-        description="Last action performed by the multi-agent system."
-    )
-    extraction_result: dict[str, str] = Field(
-        default_factory=dict,
-        description="Current results of the extraction process."
-    )
-    last_verification_results: dict[str, str] = Field(
-        default_factory=dict,
-        description="Latest results of the verification process."
-    )
-    last_node: list[str] = Field(
-        default_factory=list,
-        description="Last node that was executed."
-    )
-
-    def push_node(self, node: str):
-        self.last_node.append(node)
-        print(f"self.last_node: {self.last_node}")
 
 
 class SpeakerUtterance(BaseModel):
@@ -144,3 +108,43 @@ class SlotValue(RootModel[dict[str, SlotValueDetail]]):
     123
     """
     pass
+
+
+
+class MetaExpertState(BaseModel):
+    """
+    Meta Expert memory slots.
+    """
+
+    conversation: list[dict[str, str]] = Field(
+        default_factory=list,
+        description="A list of the conversation between the meta experts and other agents."
+    )
+    latest_user_utterance: str = Field(
+        default_factory=str,
+        description="The latest user utterance."
+    )
+    domains: list[str] = Field(
+        default_factory=list,
+        description="Which domains are present in this dialogue turn of the dataset."
+    )
+    last_action: list[str] = Field(
+        default_factory=list,
+        description="Last action performed by the multi-agent system."
+    )
+    extraction_result: dict = Field(
+        default_factory=dict,
+        description="Current results of the extraction process."
+    )
+    last_verification_results: dict[str, str] = Field(
+        default_factory=dict,
+        description="Latest results of the verification process."
+    )
+    last_node: list[str] = Field(
+        default_factory=list,
+        description="Last node that was executed."
+    )
+
+    def push_node(self, node: str):
+        self.last_node.append(node)
+        print(f"self.last_node: {self.last_node}")

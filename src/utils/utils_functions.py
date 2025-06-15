@@ -10,7 +10,11 @@ from textwrap import dedent
 from langchain_core.prompts.prompt import PromptTemplate
 
 sys.path.append("..")
-from agents_src_woz.agent_data_definitions import MetaExpertState
+from agents_src.agent_data_definitions import (
+    MetaExpertState,
+    IssueSolverValue,
+    VerificationResponse
+)
 from langchain_core.documents import Document
 
 
@@ -301,7 +305,7 @@ def create_issue_solving_dict(    # state: MetaExpertState,
     wrong_entries = {}
     for key, value in verifcation_dict.items():
     # for key, value in dict(state["last_verification_results"].root).items():
-        temp_dict = value
+        temp_dict = value.copy()
         if not temp_dict["boolean"]:
             temp_dict.pop("boolean", None)
             wrong_entries[key] = temp_dict
@@ -325,7 +329,7 @@ def build_issue_solving_prompt(# state: MetaExpertState,
     Returns:
         str: The created prompt.
     """
-    test = {
+    return {
         "slot_value_pair_description": replace_single_curly_brackets(
             json.dumps(slots)
         ),
@@ -339,7 +343,6 @@ def build_issue_solving_prompt(# state: MetaExpertState,
             json.dumps(create_issue_solving_dict(verifcation_dict))
         )
     }
-    return test
 
 
 def fix_common_spelling_mistakes(domains: list[str]) -> list[str]:
@@ -368,3 +371,28 @@ def fix_common_spelling_mistakes(domains: list[str]) -> list[str]:
     ]
 
 
+def extract_dict_from_pydantic(
+    response: IssueSolverValue | VerificationResponse
+) -> dict:
+    """
+    Transform the response to a normal dict.
+
+    Args:
+        value: (IssueSolverValue | VerificationResponse) The response
+        from the LLM
+
+    Returns:
+        dict: The value as a dict
+    """
+    final_dict = {}
+    root = dict(response.root)
+    for key in root.keys():
+        temp_dict = dict(root[key])
+        temp_dict["context"]
+        temp_list = []
+        for turn in temp_dict["context"]:
+            temp_list.append(dict(turn))
+        temp_dict["context"] = temp_list
+        final_dict[key] = temp_dict
+
+    return final_dict

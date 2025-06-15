@@ -7,7 +7,9 @@ from langchain_openai import OpenAIEmbeddings
 class QdrantConnection():
     def __init__(
         self,
-        embeddings: OpenAIEmbeddings,
+        embeddings: OpenAIEmbeddings = OpenAIEmbeddings(
+            model="text-embedding-3-large"
+        ),
         port: int = 6333,
         local: bool = True
     ) -> None:

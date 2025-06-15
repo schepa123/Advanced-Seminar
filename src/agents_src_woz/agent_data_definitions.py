@@ -95,12 +95,6 @@ class VerificationResult(RootModel[dict[str, VerificationDetail]]):
     pass
 
 
-class VerificationDetail(BaseModel):
-    value: str 
-    explanation: str
-    boolean: bool
-
-
 class VerificationResponse(RootModel[dict[str, VerificationDetail]]):
     """
     Top‐level: maps UUID (as string) → VerificationDetail
