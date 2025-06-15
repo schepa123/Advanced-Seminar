@@ -396,3 +396,37 @@ def extract_dict_from_pydantic(
         final_dict[key] = temp_dict
 
     return final_dict
+
+
+def build_rag_query_prompt(
+    slots: dict[str, str],
+    dialogue_state: list[dict[str, str]]
+) -> dict[str, str]:
+    """
+    Build the prompt for generating a RAG query.
+
+    Args:
+        slots(dict[str, str]): Definition of slots
+        dialogue_state(list[dict[str, str]}): Dialogue state of conversation
+
+    Returns:
+        dict[str, str]: The created prompt.
+    """
+    dialogue_state_temp = []
+    slots_temp = {}
+    for slot_extracted in dialogue_state:
+        key_state = list(slot_extracted.keys())[0]
+        if key_state == "None":
+            continue
+        else:
+            dialogue_state_temp.append(slot_extracted)
+            slots_temp[key_state] = slots[key_state]
+
+    return {
+        "slot_value_pair_description": replace_single_curly_brackets(
+            json.dumps(slots_temp)
+        ),
+        "dialogue_state": replace_single_curly_brackets(
+            json.dumps({"value": dialogue_state_temp})
+        )
+    }

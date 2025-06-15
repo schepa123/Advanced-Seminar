@@ -7,10 +7,10 @@ from utils import utils_functions
 
 
 class inspiredDataset:
-    def __init__(self, path: str, yml_slots_path) -> None:
+    def __init__(self, path: str, agents: agentSystem) -> None:
         self.path = path
         self.conversations = self.create_conversation_data()
-        self.agents = agentSystem(yml_slots_path=yml_slots_path)
+        self.agents = agents
 
     def create_conversation_data(self) -> dict[str, list[dict[str, str]]]:
         """

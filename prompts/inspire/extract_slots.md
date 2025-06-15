@@ -24,14 +24,13 @@ You will be presented with:
 - If multiple slot/value pairs appear in the latest user utterance, extract each as a separate entry in the output JSON.
 - Return only a JSON object mapping each extracted slot to an object with three keys:
   1. `"explanation"`: A concise (≤2 sentences) reason why you extracted that slot/value from the latest utterance.
-  2. `"value"`: The exact text (or normalized form) that triggered the extraction (as marked by the <context_extracted_because> tag).
+  2. `"value"`: The exact text (or normalized form) that triggered the extraction (as marked by the <context_extracted_because> tag). It must **ALWAYS** be a single string, a list of strings ist strictly forbidden. 
   3. `"context"`: The surrounding context of the value, using a list of objects for each speaker/utterance involved in establishing the slot's meaning. This context can span multiple conversation turns.
 - Omit any slots that have no value.
 - If no slots appear in the latest utterance, return
 {{"None": {{"explanation": "None", "value": "None", "context": [{{"speaker": "None", "utterance": "None"}}]}}}}.
 - Return only a valid JSON object as output. All keys and values must be enclosed with double quotes and there must be no trailing commas.
 - Do not include any free text, commentary, or formatting outside of the JSON object.
-
 
 ## Examples
 ### Example 1

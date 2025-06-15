@@ -20,22 +20,23 @@ DO NOT include any explanations or extra text. OUTPUT ONLY THE JSON OBJECT as sp
 ### Examples 1
 #### Input
 <slot_value_pair_description>
-{{
-"movie_trailer-watched": {{
+{{"value": [
+{{"movie_trailer-watched": {{
     "description": "Indicates that the user has seen or is familiar with a specific movie or trailer. These statements refer to prior exposure without necessarily evaluating the content.",
     "examples": [
         {{"example_1": [{{"text": "I seen that one too as <context_extracted_because>I seen Joker about a month ago</context_extracted_because>."}},{{"role": "Seeker"}}]}},
         {{"example_2": [{{"text": "Hello, I like a variety of movies, <context_extracted_because>recently have been watching The Mandalorian and a lot of martial arts movies from the 70s and 80s</context_extracted_because>."}},{{"role": "Seeker"}}]}}
     ]
-    }},
-    "genre-preferred": {{
-        "description": "Captures genres the user explicitly states they enjoy or are looking for in a movie. These can be broad categories like action, comedy, or more specific types like \u201cfeel-good family stories\u201d or \u201cDisney.\u201d",
-        "examples": [
-            {{"example_1": [{{"text": "I'm more of an <context_extracted_because>action movie or a good romance and <context_extracted_because>mystery movie</context_extracted_because>."}}, {{"role": "Seeker"}}]}},
-            {{"example_2": [{{"text": "I like <context_extracted_because>comedies, horror, thrillers, drama, or Disney</context_extracted_because>."}}, {{"role": "Seeker"}}]}},
-            {{"example_3": [{{"text": "Do you recommend any <context_extracted_because>adventure type movies</context_extracted_because> for me?"}}, {{"role": "Seeker"}}]}}
-        ]
-    }}
+    }}}},
+{{"genre-preferred": {{
+    "description": "Captures genres the user explicitly states they enjoy or are looking for in a movie. These can be broad categories like action, comedy, or more specific types like \u201cfeel-good family stories\u201d or \u201cDisney.\u201d",
+    "examples": [
+        {{"example_1": [{{"text": "I'm more of an <context_extracted_because>action movie or a good romance and <context_extracted_because>mystery movie</context_extracted_because>."}}, {{"role": "Seeker"}}]}},
+        {{"example_2": [{{"text": "I like <context_extracted_because>comedies, horror, thrillers, drama, or Disney</context_extracted_because>."}}, {{"role": "Seeker"}}]}},
+        {{"example_3": [{{"text": "Do you recommend any <context_extracted_because>adventure type movies</context_extracted_because> for me?"}}, {{"role": "Seeker"}}]}}
+    ]
+}}}}
+]
 }}
 </slot_value_pair_description>
 <dialogue_state>
@@ -104,51 +105,52 @@ DO NOT include any explanations or extra text. OUTPUT ONLY THE JSON OBJECT as sp
 }}
 </slot_value_pair_description>
 <dialogue_state>
-{
-    "movie-trailer-watched": {"explanation": "The seeker indicated that The Irishman was the most recent movie they have watched.",
+{{"values": [
+    {{"movie-trailer-watched": {{"explanation": "The seeker indicated that The Irishman was the most recent movie they have watched.",
     "value": "the irishman",
-    "context": [{"speaker": "recommender",
-        "utterance": "What was the latest movie that you've watched?"},
-        {"speaker": "seeker",
-        "utterance": "the last movie that i have watched is the irishman, which i loved"}]},
-    "movie-preferred": {"explanation": "The seeker expressed a positive evaluation by saying they loved The Irishman.",
+    "context": [{{"speaker": "recommender",
+        "utterance": "What was the latest movie that you've watched?"}},
+        {{"speaker": "seeker",
+        "utterance": "the last movie that i have watched is the irishman, which i loved"}}]}}}},
+    {{"movie-preferred": {{"explanation": "The seeker expressed a positive evaluation by saying they loved The Irishman.",
     "value": "the irishman",
-    "context": [{"speaker": "recommender",
-        "utterance": "What was the latest movie that you've watched?"},
-        {"speaker": "seeker",
-        "utterance": "the last movie that i have watched is the irishman, which i loved"}]},
-    "actor-preferred": {"explanation": "The user expresses a favorable opinion about these actors’ performances when portraying mob characters.",
+    "context": [{{"speaker": "recommender",
+        "utterance": "What was the latest movie that you've watched?"}},
+        {{"speaker": "seeker",
+        "utterance": "the last movie that i have watched is the irishman, which i loved"}}]}}}},
+    {{"actor-preferred": {{"explanation": "The user expresses a favorable opinion about these actors’ performances when portraying mob characters.",
     "value": "scorcese, deniro, pesci, and pacino",
-    "context": [{"speaker": "recommender",
-        "utterance": "What did you like most about it?"},
-        {"speaker": "seeker",
-        "utterance": "scorcese, deniro, pesci, and pacino always do an excellent job when portraying as the mob"}]},
-    "movie-description-general-preferred": {"explanation": "The seeker expresses that they usually enjoy any movie involving Scorsese, indicating a general preference for films associated with the director.",
+    "context": [{{"speaker": "recommender",
+        "utterance": "What did you like most about it?"}},
+        {{"speaker": "seeker",
+        "utterance": "scorcese, deniro, pesci, and pacino always do an excellent job when portraying as the mob"}}]}}}},
+    {{"movie-description-general-preferred": {{"explanation": "The seeker expresses that they usually enjoy any movie involving Scorsese, indicating a general preference for films associated with the director.",
     "value": "anything with scorsese",
-    "context": [{"speaker": "recommender",
-        "utterance": "I agree, they are all great actors."},
-        {"speaker": "seeker",
-        "utterance": "anything with scorsese i usually enjoy"}]},
-    "inquired-about": {"explanation": "The user’s question “what is it about?” clearly refers to the previously mentioned movie “Guilty by Suspicion.”",
+    "context": [{{"speaker": "recommender",
+        "utterance": "I agree, they are all great actors."}},
+        {{"speaker": "seeker",
+        "utterance": "anything with scorsese i usually enjoy"}}]}}}},
+    {{"inquired-about": {{"explanation": "The user’s question “what is it about?” clearly refers to the previously mentioned movie “Guilty by Suspicion.”",
     "value": "Guilty by Suspicion",
-    "context": [{"speaker": "recommender",
-        "utterance": "I loved seeing him in Guilty by Suspicion."},
-        {"speaker": "seeker",
-        "utterance": "that is a deniro film that I actually have not seen yer"},
-        {"speaker": "recommender",
-        "utterance": "Scorsese plays a part in it as well.\nI think you may like it."},
-        {"speaker": "seeker", "utterance": "what is it about?"}]},
-    "movie-wanting-to-watch": {"explanation": "The user said they will accept the recommendation, indicating intent to watch the suggested movie.",
+    "context": [{{"speaker": "recommender",
+        "utterance": "I loved seeing him in Guilty by Suspicion."}},
+        {{"speaker": "seeker",
+        "utterance": "that is a deniro film that I actually have not seen yer"}},
+        {{"speaker": "recommender",
+        "utterance": "Scorsese plays a part in it as well.\nI think you may like it."}},
+        {{"speaker": "seeker", "utterance": "what is it about?"}}]}}}},
+    {{"movie-wanting-to-watch": {{"explanation": "The user said they will accept the recommendation, indicating intent to watch the suggested movie.",
     "value": "i will accept that recommendation",
-    "context": [{"speaker": "recommender",
-        "utterance": "Scorsese plays a part in it as well. I think you may like it."},
-        {"speaker": "seeker",
-        "utterance": "that actually does sound interesting, i will accept that recommendation"}]}
-        }
+    "context": [{{"speaker": "recommender",
+        "utterance": "Scorsese plays a part in it as well. I think you may like it."}},
+        {{"speaker": "seeker",
+        "utterance": "that actually does sound interesting, i will accept that recommendation"}}]}}}}
+    ]
+}}
 </dialogue_state>
 #### Output
 ```json
 {{
   "query": "The user recently watched and thoroughly enjoyed 'The Irishman', a film directed by Martin Scorsese that explores the life of a hitman involved with the mob, featuring long-term consequences of loyalty and betrayal. They specifically praised the work of Scorsese as a director and the performances of Robert De Niro, Joe Pesci, and Al Pacino, expressing a strong preference for mob-centric stories and nuanced character portrayals in this genre. Additionally, they stated that they usually enjoy anything directed by Scorsese, indicating a broader interest in his directorial style, which often includes morally complex narratives, period settings, and powerful ensemble casts. The user also expressed curiosity about the film 'Guilty by Suspicion', asking for more information about it, and has accepted a recommendation to watch it. Please retrieve reviews and plot summaries for films similar in tone, theme, or creative direction to 'The Irishman', especially those directed by Scorsese or starring De Niro, Pacino, or Pesci, and involving organized crime, character-driven drama, or historically rooted storytelling."
-}
+}}
 ```
