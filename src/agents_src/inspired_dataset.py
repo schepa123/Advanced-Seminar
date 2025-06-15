@@ -2,14 +2,17 @@ import pandas as pd
 import os
 import json
 from uuid import uuid4
+from .graph_builder import agentSystem, graphState
+from utils import utils_functions
 
 
 class inspiredDataset:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, yml_slots_path) -> None:
         self.path = path
         self.conversations = self.create_conversation_data()
+        self.agents = agentSystem(yml_slots_path=yml_slots_path)
 
-    def create_conversation_data(self) -> dict[str, dict[str, str]]:
+    def create_conversation_data(self) -> dict[str, list[dict[str, str]]]:
         """
         Loads the conversation data and creates conversation dicts
         out of it.
@@ -152,4 +155,51 @@ class inspiredDataset:
 
         return collection_conversations
 
-    def 
+    def extract_dialogue_state(
+        self,
+        conv: list[dict[str, str]],
+        latest_user_utterance: str
+    ) -> dict[str, dict]:
+        """
+        Extracts the dialogue state from a conversation.
+
+        Args:
+            conv(list[dict[str, str]]): Conversation so far
+            latest_user_utterance(str): Latest utterance by the user
+
+        Returns:
+            dict[str, dict]: The dialogue state extracted
+        """
+        graph = graphState(
+            conversation=conv,
+            latest_user_utterance=latest_user_utterance,
+            system=self.agents
+        )
+        graph.invoke()
+        return utils_functions.extract_dict_from_pydantic(
+            graph.state["extraction_result"]
+        )
+
+    def create_recommendation_list(self, conv_id: str):
+        """
+        132
+        """
+        conv_original = self.conversations[conv_id][:10]
+        conv_temp = []
+        dialogue_state = []
+        for turn in conv_original:
+            if turn["recommend"]:
+                pass
+            else:
+                conv_temp.append({
+                    "speaker": turn["speaker"],
+                    "utterance": turn["utterance"]
+                })
+                if turn["speaker"] == "seeker":
+                    dialogue_state.append(
+                        self.extract_dialogue_state(
+                            conv=conv_temp[:-1],
+                            latest_user_utterance=conv_temp[-1]["utterance"]
+                        )
+                    )
+        return dialogue_state

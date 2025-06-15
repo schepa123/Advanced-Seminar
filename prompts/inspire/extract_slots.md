@@ -27,7 +27,8 @@ You will be presented with:
   2. `"value"`: The exact text (or normalized form) that triggered the extraction (as marked by the <context_extracted_because> tag).
   3. `"context"`: The surrounding context of the value, using a list of objects for each speaker/utterance involved in establishing the slot's meaning.
 - Omit any slots that have no value.
-- If no slots appear in the latest utterance, return {{"None": {{"explanation": "None", "value": "None"}}}}.
+- If no slots appear in the latest utterance, return
+{{"None": {{"explanation": "None", "value": "None", "context": [{{"speaker": "None", "utterance": "None"}}]}}}}.
 - Return only a valid JSON object as output. All keys and values must be enclosed with double quotes and there must be no trailing commas.
 - Do not include any free text, commentary, or formatting outside of the JSON object.
 

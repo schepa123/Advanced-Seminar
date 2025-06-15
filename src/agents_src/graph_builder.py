@@ -115,7 +115,6 @@ class agentSystem:
             extraction_results=state.extraction_result
         )
         result = self.verifier.invoke(user_prompt)
-
         result = utils_functions.extract_dict_from_pydantic(result)
         state.push_node("verifier_agent")
         return Command(
@@ -143,7 +142,7 @@ class agentSystem:
             conv=state.conversation,
             verifcation_dict=state.last_verification_results
         )
-        result = self.verifier.invoke(user_prompt)
+        result = self.issue_solver.invoke(user_prompt)
         result = {
             key: value
             for key, value in dict(result)["root"].items()
@@ -213,13 +212,21 @@ class agentSystem:
             Command: Command to execute next node
         """
 
-        print(state.domains)
-        if "no domain found" in state.domains:
-            print("Command -> END")
-            return Command(
-                update={},
-                goto=END
-            )
+        #print(state.domains)
+        #if "no domain found" in state.domains:
+        #    print("Command -> END")
+        #    return Command(
+        #        update={},
+        #         goto=END
+        #    )
+        for _, value in state.extraction_result:
+            for key in value.keys():
+                if key == "None":
+                    print("Command -> END")
+                    return Command(
+                        update={},
+                         goto=END
+                    )
         else:
             if not bool(state.extraction_result):
                 print("Command -> slot_extractor_agent")

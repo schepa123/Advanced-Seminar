@@ -110,7 +110,6 @@ class SlotValue(RootModel[dict[str, SlotValueDetail]]):
     pass
 
 
-
 class MetaExpertState(BaseModel):
     """
     Meta Expert memory slots.
