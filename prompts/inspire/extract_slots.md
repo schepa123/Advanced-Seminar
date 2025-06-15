@@ -25,7 +25,7 @@ You will be presented with:
 - Return only a JSON object mapping each extracted slot to an object with three keys:
   1. `"explanation"`: A concise (≤2 sentences) reason why you extracted that slot/value from the latest utterance.
   2. `"value"`: The exact text (or normalized form) that triggered the extraction (as marked by the <context_extracted_because> tag).
-  3. `"context"`: The surrounding context of the value, using a list of objects for each speaker/utterance involved in establishing the slot's meaning.
+  3. `"context"`: The surrounding context of the value, using a list of objects for each speaker/utterance involved in establishing the slot's meaning. This context can span multiple conversation turns.
 - Omit any slots that have no value.
 - If no slots appear in the latest utterance, return
 {{"None": {{"explanation": "None", "value": "None", "context": [{{"speaker": "None", "utterance": "None"}}]}}}}.
@@ -159,5 +159,45 @@ Would you be interested in watching the trailer?'}}
         {{"speaker": "seeker", "utterance": "I preffer some risque humor or some off the wall comical set off circumstances."}}
     ]
   }}
+}}
+```
+### Example 4
+<slot_value_pair>
+{{"inquired-about":
+  "description": "Represents cases where the user asks for additional information about a movie, actor, franchise, or concept. These inquiries indicate interest and knowledge gaps, often leading into preference formation.",
+  "examples": [
+    {{"example_1": [{{"turn_1": [{{"text": "big fan of all the pitch black movies with vin diesel?"}}, {{"role": "Recommender"}}]}}, {{"turn_2": [{{"text": "i have never heard of those. <context_extracted_because>what are those about? how many of them are there?</context_extracted_because>}}, {{"role": "Seeker"}}]}}]}},
+    {{"example_1": [{{"turn_1": [{{"text": "You've no doubt seen the MIB series, but those were kind of good as well."}}, {{"role": "Recommender"}}]}}, {{"turn_2": [{{"text": "<context_extracted_because>Can you tell me what you like about MIB?</context_extracted_because>}}, {{"role": "Seeker"}}]}}]}}
+  ]
+}}
+</slot_value_pair>
+<prior_conversation>
+{{'speaker': 'recommender',
+'utterance': 'I loved seeing him in Guilty by Suspicion.',
+'recommend': True,
+'movies': ['Guilty by Suspicion (1991)']}},
+{{'speaker': 'seeker',
+'utterance': '\nthat is a deniro film that I actually have not seen yer',
+'recommend': False}},
+{{'speaker': 'recommender',
+'utterance': 'Scorsese plays a part in it as well.\nI think you may like it.',
+'recommend': False}},
+<prior_conversation>
+<latest_user_utterance>
+what is it about
+</latest_user_utterance>
+
+#### Output
+```json
+{{"inquired-about": {{
+  "explanation": "The user is clearly asking for more information about Guilty",
+  "value": "Guilty by Suspicion",
+  "context": [
+    {{"speaker": "recommender", "utterance": "I loved seeing him in Guilty by Suspicion."}},
+    {{"speaker": "seeker", "utterance": "\nthat is a deniro film that I actually have not seen yer"}},
+    {{"speaker": "recommender", "utterance": "Scorsese plays a part in it as well.\nI think you may like it."}},
+    {{"speaker": "seeker", "utterance": "what is it about"}}
+  ]
+}}
 }}
 ```

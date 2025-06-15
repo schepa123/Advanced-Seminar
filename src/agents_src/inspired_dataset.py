@@ -184,7 +184,7 @@ class inspiredDataset:
         """
         132
         """
-        conv_original = self.conversations[conv_id][:10]
+        conv_original = self.conversations[conv_id][:16]
         conv_temp = []
         dialogue_state = []
         for turn in conv_original:

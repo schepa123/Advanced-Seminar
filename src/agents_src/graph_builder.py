@@ -10,7 +10,8 @@ from .agent_data_definitions import (
     MetaExpertState,
     IssueSolverValue,
     VerificationResponse,
-    ExtractionValueResponse
+    ExtractionValueResponse,
+    RagQuery
 )
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
@@ -33,6 +34,7 @@ class agentSystem:
         self.slot_extractor = self.create_agent(prompt_name="extract_slots")
         self.verifier = self.create_agent(prompt_name="verify_results")
         self.issue_solver = self.create_agent(prompt_name="solve_issue")
+        self.rag_query_creater = self.create_agent(prompt_name="rag_query")
 
     def create_agent(self, prompt_name) -> RunnableSerializable:
         """
@@ -52,6 +54,8 @@ class agentSystem:
             parser = PydanticOutputParser(pydantic_object=VerificationResponse)
         elif prompt_name == "solve_issue":
             parser = PydanticOutputParser(pydantic_object=IssueSolverValue)
+        elif prompt_name == "rag_query":
+            parser = PydanticOutputParser(pydantic_object=RagQuery)
 
         return prompt | self.model | parser
 

@@ -147,3 +147,8 @@ class MetaExpertState(BaseModel):
     def push_node(self, node: str):
         self.last_node.append(node)
         print(f"self.last_node: {self.last_node}")
+
+
+class RagQuery(BaseModel):
+    """Defines the Response for the Rag query"""
+    query: str = Field(..., description="Natural language query for RAG")
